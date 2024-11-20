@@ -1,7 +1,6 @@
 package cz.frank.spacex
 
 import org.junit.Test
-
 import org.junit.Assert.*
 
 /**
