@@ -75,6 +75,12 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.serialization.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.slf4j)
+
 }
 
 detekt {
