@@ -1,6 +1,6 @@
 @file:Suppress("UnusedPrivateProperty")
 
-package cz.frank.spacex.ui.theme
+package cz.frank.spacex.shared.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

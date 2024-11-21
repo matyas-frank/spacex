@@ -1,4 +1,4 @@
-package cz.frank.spacex.ui.theme
+package cz.frank.spacex.shared.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
