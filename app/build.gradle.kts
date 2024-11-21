@@ -81,6 +81,9 @@ dependencies {
     implementation(libs.ktor.client.logging)
     implementation(libs.slf4j)
 
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+
 }
 
 detekt {
