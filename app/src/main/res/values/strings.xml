@@ -2,4 +2,6 @@
     <string name="app_name">SpaceX</string>
     <string name="drawer_dragons">Dragons</string>
     <string name="drawer_starlink">Starlink</string>
+
+    <string name="dragon_search">Dragons</string>
 </resources>
