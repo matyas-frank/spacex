@@ -14,7 +14,7 @@ import kotlinx.serialization.json.Json
 private const val HUNDRED_SECONDS = 100_000
 
 @Suppress("FunctionNaming")
-fun KtorClient(host: String, path: String) = HttpClient(Android) {
+fun HttpClient(host: String, path: String) = HttpClient(Android) {
     expectSuccess = true
 
 
