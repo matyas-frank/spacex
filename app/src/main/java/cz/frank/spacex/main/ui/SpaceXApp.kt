@@ -1,6 +1,5 @@
 package cz.frank.spacex.main.ui
 
-import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
@@ -16,7 +15,6 @@ import cz.frank.spacex.dragons.ui.DragonsNavigation
 import cz.frank.spacex.dragons.ui.dragonsNavigation
 import cz.frank.spacex.starlink.StarlinkNavigation
 import cz.frank.spacex.starlink.starlinkNavigation
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable fun SpaceXApp(modifier: Modifier = Modifier) {
@@ -24,12 +22,20 @@ import kotlinx.coroutines.launch
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var selectedDrawerSection by rememberSaveable { mutableStateOf(DrawerItem.Dragons) }
+    fun toggleDrawer() {
+        scope.launch {
+            drawerState.apply {
+                if (isClosed) open() else close()
+            }
+        }
+    }
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(
                 selectedDrawerSection,
                 onItemClick = {
                     selectedDrawerSection = it
+                    toggleDrawer()
                     when (it) {
                         DrawerItem.Dragons -> {
                             navController.navigate(DragonsNavigation) {
@@ -56,24 +62,17 @@ import kotlinx.coroutines.launch
         modifier = modifier,
         drawerState = drawerState,
     ) {
-        Navigation(navController, scope, drawerState)
+        Navigation(navController, ::toggleDrawer)
     }
 }
 
 @Composable private fun Navigation(
     navController: NavHostController,
-    scope: CoroutineScope,
-    drawerState: DrawerState
+    toggleDrawer: () -> Unit
 ) {
     NavHost(navController, DragonsNavigation) {
         spaceXNavigationGraph(
-            toggleDrawer = {
-                scope.launch {
-                    drawerState.apply {
-                        if (isClosed) open() else close()
-                    }
-                }
-            }
+            toggleDrawer = toggleDrawer
         )
     }
 }
