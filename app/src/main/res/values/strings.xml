@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SpaceX</string>
+    <string name="drawer_dragons">Dragons</string>
+    <string name="drawer_starlink">Starlink</string>
 </resources>
