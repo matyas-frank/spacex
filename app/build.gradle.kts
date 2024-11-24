@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.detekt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelable)
+    alias(libs.plugins.serialization)
 }
 
 android {
@@ -48,6 +50,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.adaptive.android)
+    implementation(libs.androidx.adaptive.navigation.android)
+    implementation(libs.androidx.adaptive.layout.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -75,6 +80,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.android)
