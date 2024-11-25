@@ -16,7 +16,7 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.frank.spacex.ships.ui.search.ShipDetail
+import cz.frank.spacex.ships.ui.main.ShipDetail
 import cz.frank.spacex.ships.ui.search.data
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)

@@ -3,7 +3,7 @@ package cz.frank.spacex.ships.ui
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import cz.frank.spacex.ships.ui.search.ShipListDetail
+import cz.frank.spacex.ships.ui.main.ShipsSection
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +16,7 @@ object ShipsNavigation {
 fun NavGraphBuilder.dragonsNavigation(toggleDrawer: () -> Unit) {
     navigation<ShipsNavigation>(ShipsNavigation.ListDetail) {
         composable<ShipsNavigation.ListDetail> {
-            ShipListDetail(toggleDrawer)
+            ShipsSection(toggleDrawer = toggleDrawer)
         }
     }
 }
