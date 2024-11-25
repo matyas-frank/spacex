@@ -1,4 +1,4 @@
-package cz.frank.spacex.dragons.ui.detail
+package cz.frank.spacex.ships.ui.detail
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -16,13 +16,13 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.frank.spacex.dragons.ui.search.DragonDetail
-import cz.frank.spacex.dragons.ui.search.data
+import cz.frank.spacex.ships.ui.search.ShipDetail
+import cz.frank.spacex.ships.ui.search.data
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
-@Composable fun DragonDetailScreen(
-    selectedTopic: DragonDetail,
-    navigator: ThreePaneScaffoldNavigator<DragonDetail>,
+@Composable fun ShipDetailScreen(
+    selectedTopic: ShipDetail,
+    navigator: ThreePaneScaffoldNavigator<ShipDetail>,
     animatedPaneScope: AnimatedPaneScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
@@ -32,7 +32,7 @@ import cz.frank.spacex.dragons.ui.search.data
             modifier,
             topBar = {
             TopAppBar(
-                title = { Text("Dragon detail") },
+                title = { Text("Ship detail") },
                 navigationIcon = {
                     IconButton({
                         if (navigator.canNavigateBack()) {

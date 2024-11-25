@@ -11,8 +11,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import cz.frank.spacex.dragons.ui.DragonsNavigation
-import cz.frank.spacex.dragons.ui.dragonsNavigation
+import cz.frank.spacex.ships.ui.ShipsNavigation
+import cz.frank.spacex.ships.ui.dragonsNavigation
 import cz.frank.spacex.starlink.StarlinkNavigation
 import cz.frank.spacex.starlink.starlinkNavigation
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedDrawerSection by rememberSaveable { mutableStateOf(DrawerItem.Dragons) }
+    var selectedDrawerSection by rememberSaveable { mutableStateOf(DrawerItem.Ships) }
     fun toggleDrawer() {
         scope.launch {
             drawerState.apply {
@@ -37,8 +37,8 @@ import kotlinx.coroutines.launch
                     selectedDrawerSection = it
                     toggleDrawer()
                     when (it) {
-                        DrawerItem.Dragons -> {
-                            navController.navigate(DragonsNavigation) {
+                        DrawerItem.Ships -> {
+                            navController.navigate(ShipsNavigation) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
                                 }
@@ -70,7 +70,7 @@ import kotlinx.coroutines.launch
     navController: NavHostController,
     toggleDrawer: () -> Unit
 ) {
-    NavHost(navController, DragonsNavigation) {
+    NavHost(navController, ShipsNavigation) {
         spaceXNavigationGraph(
             toggleDrawer = toggleDrawer
         )

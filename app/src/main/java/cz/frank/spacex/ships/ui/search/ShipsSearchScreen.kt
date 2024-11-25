@@ -1,4 +1,4 @@
-package cz.frank.spacex.dragons.ui.search
+package cz.frank.spacex.ships.ui.search
 
 import android.os.Parcelable
 import androidx.activity.compose.BackHandler
@@ -24,27 +24,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cz.frank.spacex.R
-import cz.frank.spacex.dragons.ui.detail.DragonDetailScreen
+import cz.frank.spacex.ships.ui.detail.ShipDetailScreen
 import kotlinx.parcelize.Parcelize
 
 // Create some simple sample data
 val data = listOf(
-    DragonUI("0", "Android", "ASdasdasdasdas")
+    ShipUI("0", "Android", "ASdasdasdasdas")
 )
 
 @Parcelize
-data class DragonUI(
+data class ShipUI(
     val id: String,
     val title: String,
     val image: String,
 ) : Parcelable
 
 @Parcelize
-data class DragonDetail(val id: String) : Parcelable
+data class ShipDetail(val id: String) : Parcelable
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
-@Composable fun DragonListDetail(toggleDrawer: () -> Unit) {
-    val navigator = rememberListDetailPaneScaffoldNavigator<DragonDetail>()
+@Composable fun ShipListDetail(toggleDrawer: () -> Unit) {
+    val navigator = rememberListDetailPaneScaffoldNavigator<ShipDetail>()
     BackHandler(navigator.canNavigateBack()) {
         navigator.navigateBack()
     }
@@ -54,14 +54,14 @@ data class DragonDetail(val id: String) : Parcelable
             value = navigator.scaffoldValue,
             listPane = {
                 AnimatedPane {
-                    Dragons(navigator, this@AnimatedPane, this@SharedTransitionLayout, toggleDrawer)
+                    Ships(navigator, this@AnimatedPane, this@SharedTransitionLayout, toggleDrawer)
                 }
 
             },
             detailPane = {
                 AnimatedPane {
                     navigator.currentDestination?.content?.let {
-                        DragonDetailScreen(it, navigator, this@AnimatedPane, this@SharedTransitionLayout)
+                        ShipDetailScreen(it, navigator, this@AnimatedPane, this@SharedTransitionLayout)
                     }
 
                 }
@@ -72,8 +72,8 @@ data class DragonDetail(val id: String) : Parcelable
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
-@Composable private fun Dragons(
-    navigator: ThreePaneScaffoldNavigator<DragonDetail>,
+@Composable private fun Ships(
+    navigator: ThreePaneScaffoldNavigator<ShipDetail>,
     animatedPaneScope: AnimatedPaneScope,
     sharedTransitionScope: SharedTransitionScope,
     toggleDrawer: () -> Unit,
@@ -90,23 +90,23 @@ data class DragonDetail(val id: String) : Parcelable
     ) {
         LazyColumn(Modifier.padding(it)) {
             items(data.toList()) {
-                Dragon(navigator, it, animatedPaneScope, sharedTransitionScope)
+                Ship(navigator, it, animatedPaneScope, sharedTransitionScope)
             }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class)
-@Composable private fun Dragon(
-    navigator: ThreePaneScaffoldNavigator<DragonDetail>,
-    dragon: DragonUI,
+@Composable private fun Ship(
+    navigator: ThreePaneScaffoldNavigator<ShipDetail>,
+    dragon: ShipUI,
     animatedPaneScope: AnimatedPaneScope,
     sharedTransitionScope: SharedTransitionScope,
 ) {
     Column {
         ListItem(
             modifier = Modifier.clickable {
-                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, DragonDetail(dragon.id))
+                navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, ShipDetail(dragon.id))
             },
             headlineContent = {
                 with(sharedTransitionScope) {

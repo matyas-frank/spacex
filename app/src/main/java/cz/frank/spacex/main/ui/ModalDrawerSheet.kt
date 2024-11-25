@@ -48,12 +48,12 @@ import cz.frank.spacex.R
 }
 
 private val drawerItems = listOf(
-    DrawerItemUI(DrawerItem.Dragons, R.string.drawer_dragons, R.drawable.ic_rocket),
+    DrawerItemUI(DrawerItem.Ships, R.string.drawer_dragons, R.drawable.ic_rocket),
     DrawerItemUI(DrawerItem.Starlink, R.string.drawer_starlink, R.drawable.ic_satellite)
 )
 
 private data class DrawerItemUI(val id: DrawerItem, @StringRes val name: Int, @DrawableRes val icon: Int)
 
 enum class DrawerItem {
-    Dragons, Starlink
+    Ships, Starlink
 }
