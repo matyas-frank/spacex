@@ -37,24 +37,8 @@ import kotlinx.coroutines.launch
                     selectedDrawerSection = it
                     toggleDrawer()
                     when (it) {
-                        DrawerItem.Ships -> {
-                            navController.navigate(ShipsNavigation) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                        DrawerItem.Starlink -> {
-                            navController.navigate(StarlinkNavigation) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+                        DrawerItem.Ships -> { navController.drawerItemNavigation(ShipsNavigation) }
+                        DrawerItem.Starlink -> { navController.drawerItemNavigation(StarlinkNavigation) }
                     }
                 },
             )
@@ -80,4 +64,14 @@ import kotlinx.coroutines.launch
 private fun NavGraphBuilder.spaceXNavigationGraph(toggleDrawer: () -> Unit) {
     dragonsNavigation(toggleDrawer)
     starlinkNavigation(toggleDrawer)
+}
+
+private fun NavHostController.drawerItemNavigation(item: Any) {
+    navigate(item) {
+        popUpTo(graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
 }
