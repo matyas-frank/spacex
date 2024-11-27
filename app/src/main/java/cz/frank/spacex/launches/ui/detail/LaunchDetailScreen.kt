@@ -1,5 +1,6 @@
-package cz.frank.spacex.ships.ui.detail
+package cz.frank.spacex.launches.ui.detail
 
+import android.os.Parcelable
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
@@ -16,13 +17,13 @@ import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cz.frank.spacex.ships.ui.main.ShipDetail
-import cz.frank.spacex.ships.ui.search.data
+import cz.frank.spacex.launches.ui.search.data
+import kotlinx.parcelize.Parcelize
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class, ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
-@Composable fun ShipDetailScreen(
-    selectedTopic: ShipDetail,
-    navigator: ThreePaneScaffoldNavigator<ShipDetail>,
+@Composable fun LaunchDetailScreen(
+    selectedTopic: LaunchDetail,
+    navigator: ThreePaneScaffoldNavigator<LaunchDetail>,
     animatedPaneScope: AnimatedPaneScope,
     sharedTransitionScope: SharedTransitionScope,
     modifier: Modifier = Modifier,
@@ -32,7 +33,7 @@ import cz.frank.spacex.ships.ui.search.data
             modifier,
             topBar = {
             TopAppBar(
-                title = { Text("Ship detail") },
+                title = { Text("Launch detail") },
                 navigationIcon = {
                     IconButton({
                         if (navigator.canNavigateBack()) {
@@ -44,7 +45,7 @@ import cz.frank.spacex.ships.ui.search.data
         }) {
             Column(Modifier.padding(it)) {
                 Text(
-                    selectedTopic.id,
+                    selectedTopic.id.toString(),
                     modifier = Modifier
                         .padding(vertical = 16.dp)
                         .sharedElement(
@@ -72,3 +73,6 @@ import cz.frank.spacex.ships.ui.search.data
         }
     }
 }
+
+@Parcelize
+data class LaunchDetail(val id: Int) : Parcelable

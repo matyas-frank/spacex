@@ -1,6 +1,7 @@
 package cz.frank.spacex.main
 
 import android.app.Application
+import cz.frank.spacex.launches.di.launchesModule
 import cz.frank.spacex.main.di.spaceXModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -15,7 +16,7 @@ class SpaceXApplication : Application(){
             androidLogger()
             androidContext(this@SpaceXApplication)
             loadKoinModules(
-                spaceXModule
+                spaceXModule + launchesModule
             )
         }
     }
