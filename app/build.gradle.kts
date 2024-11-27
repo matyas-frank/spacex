@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -73,6 +75,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.core.viewmodel)
     implementation(libs.koin.android)
+    implementation(libs.koin.compose.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
 
