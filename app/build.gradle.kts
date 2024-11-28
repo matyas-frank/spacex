@@ -86,10 +86,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.negotiation)
     implementation(libs.ktor.client.serialization.json)
     implementation(libs.ktor.client.logging)
+    testImplementation(libs.ktor.client.mock)
     implementation(libs.slf4j)
 
     implementation(libs.kotlinx.coroutines.core)
@@ -97,7 +98,7 @@ dependencies {
 
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.koin.test)
-
+    testImplementation(libs.kotlinx.coroutines.test)
 }
 
 detekt {
