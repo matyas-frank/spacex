@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,6 +11,10 @@ plugins {
 android {
     namespace = "cz.frank.spacex"
     compileSdk = 35
+
+    packaging {
+        resources.excludes += "/META-INF/INDEX.LIST"
+    }
 
     defaultConfig {
         applicationId = "cz.frank.spacex"
@@ -91,7 +93,7 @@ dependencies {
     implementation(libs.ktor.client.serialization.json)
     implementation(libs.ktor.client.logging)
     testImplementation(libs.ktor.client.mock)
-    implementation(libs.slf4j)
+    implementation(libs.logback)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
