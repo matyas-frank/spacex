@@ -1,6 +1,5 @@
 package cz.frank.spacex.launches.ui.search
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -42,77 +41,77 @@ val data = listOf(
         state = LaunchPreviewModel.State.Launched(true)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 2,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(false)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 3,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Upcoming
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 4,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(true)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 5,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(false)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 6,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Upcoming
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 7,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(true)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 8,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(false)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 9,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Upcoming
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 10,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(true)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 11,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
         rocket = "Falcon 1",
         state = LaunchPreviewModel.State.Launched(false)
     ),
     LaunchPreviewModel(
-        id = 1,
+        id = 12,
         title = "FalconSat",
         patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
         rocket = "Falcon 1",
@@ -129,7 +128,7 @@ val data = listOf(
     vm: LaunchSearchViewModel = koinViewModel(),
 ) {
     val query by vm.query.collectAsState()
-    Layout(
+    LaunchesScreenLayout(
         query,
         vm::onQueryChange,
         vm::isQueryEmpty,
@@ -144,7 +143,7 @@ val data = listOf(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun Layout(
+private fun LaunchesScreenLayout(
     query: String,
     onQueryChange: (String) -> Unit,
     isQueryEmpty: (String) -> Boolean,
@@ -194,50 +193,33 @@ private fun Layout(
         Surface(Modifier.padding(it)) {
             LazyColumn(verticalArrangement = Arrangement.Top) {
                 items(data.toList()) { launch ->
-                    NewLaunchItem(launch, navigateToDetail, textAnimationModifier)
+                    LaunchItem(launch, navigateToDetail, textAnimationModifier)
                 }
             }
         }
     }
 }
 
-@Preview
-@Composable
-private fun Preview() {
-    Layout(
-        "Query",
-        { _ -> },
-        { _ -> false },
-        {},
-        { },
-        onEraseQueryClick = {},
-        onFilterScreenClick = {},
-        Modifier,
-        { _ -> Modifier },
-    )
-}
-
-
-@Composable private fun NewLaunchItem(
+@Composable private fun LaunchItem(
     model: LaunchPreviewModel,
     navigateToDetail: (LaunchDetail) -> Unit,
     textAnimationModifier: @Composable (LaunchDetail) -> Modifier
 ) {
     Column {
         ListItem(
-            modifier = textAnimationModifier(LaunchDetail(model.id))
+            modifier = Modifier
                 .clickable { navigateToDetail(LaunchDetail(model.id)) }
                 .fillMaxWidth(),
             headlineContent = { Text(model.title) },
-            leadingContent = { Image(model.patch) },
-            trailingContent = { StateIcon(model.state) },
+            leadingContent = { LaunchItemImage(model.patch) },
+            trailingContent = { LaunchItemIcon(model.state) },
             supportingContent = { Text(model.rocket) }
         )
         HorizontalDivider()
     }
 }
 
-@Composable private fun StateIcon(state: LaunchPreviewModel.State) {
+@Composable private fun LaunchItemIcon(state: LaunchPreviewModel.State) {
     Card(shape = CircleShape) {
         Box(Modifier.padding(8.dp)){
             val iconSize = 28.dp
@@ -262,7 +244,7 @@ private fun Preview() {
     }
 }
 
-@Composable private fun Image(url: String) {
+@Composable private fun LaunchItemImage(url: String) {
     val imagePainter = rememberAsyncImagePainter(
         url,
         onState = {  }
@@ -280,12 +262,29 @@ private fun Preview() {
     }
 }
 
+
+@Preview
+@Composable
+private fun Preview() {
+    LaunchesScreenLayout(
+        "Query",
+        { _ -> },
+        { _ -> false },
+        {},
+        { },
+        onEraseQueryClick = {},
+        onFilterScreenClick = {},
+        Modifier,
+        { _ -> Modifier },
+    )
+}
+
 @Preview
 @Composable private fun LaunchItemPreview() {
     SpaceXTheme {
         Box(Modifier.padding(top = 40.dp)) {
             Column {
-                NewLaunchItem(
+                LaunchItem(
                     LaunchPreviewModel(
                         id = 1,
                         title = "FalconSat",
@@ -297,7 +296,7 @@ private fun Preview() {
                     { Modifier },
                 )
                 HorizontalDivider()
-                NewLaunchItem(
+                LaunchItem(
                     LaunchPreviewModel(
                         id = 1,
                         title = "FalconSat",
@@ -309,7 +308,7 @@ private fun Preview() {
                     { Modifier },
                 )
                 HorizontalDivider()
-                NewLaunchItem(
+                LaunchItem(
                     LaunchPreviewModel(
                         id = 1,
                         title = "FalconSat",
