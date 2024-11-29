@@ -131,7 +131,7 @@ val data = listOf(
     LaunchesScreenLayout(
         query,
         vm::onQueryChange,
-        vm::isQueryEmpty,
+        LaunchSearchViewModel::isQueryEmpty,
         toggleDrawer,
         navigateToDetail,
         vm::eraseQuery,

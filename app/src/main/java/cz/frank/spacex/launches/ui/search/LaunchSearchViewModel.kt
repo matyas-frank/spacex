@@ -1,15 +1,30 @@
 package cz.frank.spacex.launches.ui.search
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import androidx.lifecycle.viewModelScope
+import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class LaunchSearchViewModel : ViewModel() {
+class LaunchSearchViewModel(private val filterRepository: ILaunchesFilterRepository) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
+
+    init {
+        viewModelScope.launch { _query.value = filterRepository.query.first() }
+    }
+
     fun onQueryChange(query: String) {
         _query.value = query
+        triggerSearch()
     }
-    fun isQueryEmpty(query: String) = query.isBlank()
     fun eraseQuery() = onQueryChange("")
+
+    private fun triggerSearch() {
+       viewModelScope.launch { filterRepository.setQuery(query.value) }
+    }
+
+    companion object {
+        fun isQueryEmpty(query: String) = query.isBlank()
+    }
 }
