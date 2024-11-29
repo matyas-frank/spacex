@@ -101,6 +101,8 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.koin.test)
     testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation(libs.androidx.datastore.preferences)
 }
 
 detekt {
