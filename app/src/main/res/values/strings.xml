@@ -5,7 +5,9 @@
 
     <string name="launch_search">Launches</string>
     <string name="launch_search_input_field_placeholder">Search for launches</string>
-    <string name="launches_search_chip_active">Active</string>
-    <string name="launches_search_chip_not_active">Decommissioned</string>
+
+    <string name="launches_filter_title">Filters</string>
+    <string name="launches_filter_chip_launched">Launched</string>
+    <string name="launches_filter_chip_upcoming">Upcoming</string>
     <string name="launches_filter_rockets">Rockets</string>
 </resources>

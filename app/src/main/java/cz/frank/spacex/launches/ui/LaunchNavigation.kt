@@ -16,7 +16,11 @@ fun NavGraphBuilder.launchesNavigation(navHostController: NavHostController, tog
             LaunchesSection(navHostController, toggleDrawer)
         }
         composable<LaunchesNavigation.Filter> {
-            LaunchesFilterScreen()
+            LaunchesFilterScreen(
+                onBackClick = { navHostController.navigateUp() },
+                navigateToRockets = { navHostController.navigate(LaunchesNavigation.Rockets) }
+            )
+        }
         composable<LaunchesNavigation.Rockets> {
             LaunchFilterRocketScreen(
                 onBackClick = { navHostController.navigateUp() }
