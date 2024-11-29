@@ -10,12 +10,14 @@ import cz.frank.spacex.launches.data.repository.LaunchesFilterRocketRepository
 import cz.frank.spacex.launches.ui.filter.LaunchFilterViewModel
 import cz.frank.spacex.launches.ui.filter.rocket.LaunchFilterRocketViewModel
 import cz.frank.spacex.launches.ui.search.LaunchSearchViewModel
+import cz.frank.spacex.main.data.SpaceXDatabase
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val launchesModule = module {
+    single { get<SpaceXDatabase>().launchesDao() }
     singleOf(::LaunchesAPI) bind LaunchesAPI::class
 
     singleOf(::LaunchesFilterDao) bind ILaunchesFilterDao::class
