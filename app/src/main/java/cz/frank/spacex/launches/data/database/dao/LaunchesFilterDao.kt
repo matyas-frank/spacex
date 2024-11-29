@@ -40,7 +40,7 @@ class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
 
     override suspend fun toggleLaunchedSelected() {
         context.dataStore.edit { settings ->
-            settings[isUpcomingSelectedKey] = !(settings[isLaunchedSelectedKey] ?: IS_LAUNCHED_SELECTED_DEFAULT_VALUE)
+            settings[isLaunchedSelectedKey] = !(settings[isLaunchedSelectedKey] ?: IS_LAUNCHED_SELECTED_DEFAULT_VALUE)
         }
     }
 
