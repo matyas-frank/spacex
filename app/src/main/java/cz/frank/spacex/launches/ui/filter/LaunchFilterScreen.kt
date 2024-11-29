@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.material3.FilterChip
 import androidx.compose.runtime.Composable
@@ -138,7 +137,6 @@ data class Chip(val isSelected: Boolean, val onClick: () -> Unit)
         onClick = onClick,
         label = { Text(stringResource(label)) },
         leadingIcon = { AnimatedVisibility(isSelected) { Icon(Icons.Default.Check, null) } },
-        trailingIcon = { AnimatedVisibility(!isSelected) { Icon(Icons.Default.Close, null) } }
     )
 }
 
