@@ -128,8 +128,10 @@ val data = listOf(
     vm: LaunchSearchViewModel = koinViewModel(),
 ) {
     val query by vm.query.collectAsState()
+    val isAnyFilterActive by vm.isAnyFilterActive.collectAsState()
     LaunchesScreenLayout(
         query,
+        isAnyFilterActive,
         vm::onQueryChange,
         LaunchSearchViewModel::isQueryEmpty,
         toggleDrawer,
@@ -145,6 +147,7 @@ val data = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 private fun LaunchesScreenLayout(
     query: String,
+    isAnyFilterActive: Boolean,
     onQueryChange: (String) -> Unit,
     isQueryEmpty: (String) -> Boolean,
     toggleDrawer: () -> Unit,
@@ -183,7 +186,14 @@ private fun LaunchesScreenLayout(
                     }
                 }, actions = {
                     IconButton(onFilterScreenClick) {
-                        Icon(painterResource(R.drawable.ic_filter_list), null)
+                        BadgedBox(
+                            badge = {
+                                if (isAnyFilterActive) { Badge() }
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.ic_filter_list), null, Modifier.padding(2.dp))
+                        }
+
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -268,6 +278,7 @@ private fun LaunchesScreenLayout(
 private fun Preview() {
     LaunchesScreenLayout(
         "Query",
+        true,
         { _ -> },
         { _ -> false },
         {},

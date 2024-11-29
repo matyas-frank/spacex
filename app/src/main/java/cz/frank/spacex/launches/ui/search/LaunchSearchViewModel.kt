@@ -10,6 +10,13 @@ class LaunchSearchViewModel(private val filterRepository: ILaunchesFilterReposit
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
 
+    val isAnyFilterActive = filterRepository.isAnyFilterActive
+        .stateIn(
+            viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            false
+        )
+
     init {
         viewModelScope.launch { _query.value = filterRepository.query.first() }
     }
