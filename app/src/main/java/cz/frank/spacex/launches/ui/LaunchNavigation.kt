@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import cz.frank.spacex.launches.ui.filter.LaunchesFilterScreen
+import cz.frank.spacex.launches.ui.filter.rocket.LaunchFilterRocketScreen
 import cz.frank.spacex.launches.ui.main.LaunchesSection
 import cz.frank.spacex.main.ui.NavigationDrawerItem
 import kotlinx.serialization.Serializable
@@ -16,6 +17,11 @@ fun NavGraphBuilder.launchesNavigation(navHostController: NavHostController, tog
         }
         composable<LaunchesNavigation.Filter> {
             LaunchesFilterScreen()
+        composable<LaunchesNavigation.Rockets> {
+            LaunchFilterRocketScreen(
+                onBackClick = { navHostController.navigateUp() }
+
+            )
         }
     }
 }
@@ -26,4 +32,7 @@ object LaunchesNavigation {
 
     @Serializable
     data object Filter
+
+    @Serializable
+    data object Rockets
 }
