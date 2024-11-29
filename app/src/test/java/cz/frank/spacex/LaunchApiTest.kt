@@ -1,6 +1,6 @@
 package cz.frank.spacex
 
-import cz.frank.spacex.launches.data.LaunchesAPI
+import cz.frank.spacex.launches.data.api.LaunchesAPI
 import cz.frank.spacex.shared.data.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
