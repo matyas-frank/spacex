@@ -1,5 +1,6 @@
 package cz.frank.spacex.launches.di
 
+import cz.frank.spacex.launches.data.api.LaunchesAPI
 import cz.frank.spacex.launches.data.database.dao.ILaunchesFilterDao
 import cz.frank.spacex.launches.data.database.dao.LaunchesFilterDao
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
@@ -15,6 +16,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val launchesModule = module {
+    singleOf(::LaunchesAPI) bind LaunchesAPI::class
+
     singleOf(::LaunchesFilterDao) bind ILaunchesFilterDao::class
 
     singleOf(::LaunchesFilterRocketRepository) bind ILaunchesFilterRocketRepository::class
