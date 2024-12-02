@@ -12,11 +12,13 @@ interface ILaunchesFilterDao {
     val isLaunchedSelected: Flow<Boolean>
     val selectedRocketsId: Flow<Set<String>>
     val query: Flow<String>
+    val timeOfLastRefresh: Flow<Long?>
 
     suspend fun toggleLaunchedSelected()
     suspend fun toggleUpcomingSelected()
     suspend fun setQuery(query: String)
     suspend fun setRocketsIds(ids: Set<String>)
+    suspend fun changeLastUpdated(millis: Long?)
 }
 
 class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
@@ -25,6 +27,7 @@ class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
     private val isUpcomingSelectedKey = booleanPreferencesKey("is_upcoming_selected")
     private val selectedRocketIdsKey = stringSetPreferencesKey("selected_rocket_ids")
     private val queryKey = stringPreferencesKey("query")
+    private val lastRefreshKey = longPreferencesKey("last_updated")
 
     override val isLaunchedSelected: Flow<Boolean> =
         context.dataStore.data.map { it[isLaunchedSelectedKey] ?: IS_LAUNCHED_SELECTED_DEFAULT_VALUE }
@@ -37,6 +40,9 @@ class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
 
     override val query: Flow<String> =
         context.dataStore.data.map { it[queryKey] ?: "" }
+
+    override val timeOfLastRefresh: Flow<Long?> =
+        context.dataStore.data.map { it[lastRefreshKey] }
 
     override suspend fun toggleLaunchedSelected() {
         context.dataStore.edit { settings ->
@@ -59,6 +65,12 @@ class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
     override suspend fun setQuery(query: String) {
         context.dataStore.edit { settings ->
             settings[queryKey] = query
+        }
+    }
+
+    override suspend fun changeLastUpdated(millis: Long?) {
+        context.dataStore.edit { settings ->
+            settings[lastRefreshKey] = millis ?: 0
         }
     }
 

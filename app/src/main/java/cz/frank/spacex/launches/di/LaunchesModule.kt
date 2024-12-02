@@ -19,8 +19,14 @@ val launchesModule = module {
     singleOf(::LaunchesAPI) bind ILaunchesAPI::class
     singleOf(::LaunchesFilterDao) bind ILaunchesFilterDao::class
 
+
+    singleOf(::LaunchesRepository)
     singleOf(::LaunchesFilterRocketRepository) bind ILaunchesFilterRocketRepository::class
     singleOf(::LaunchesFilterRepository) bind ILaunchesFilterRepository::class
+    factory { (filters: ILaunchesFilterRepository.Filters, pageSize: Int) ->
+        LaunchesMediator(get(), get(), get(), get(), filters, get(), pageSize)
+    }
+
 
     viewModelOf(::LaunchSearchViewModel)
     viewModelOf(::LaunchFilterViewModel)

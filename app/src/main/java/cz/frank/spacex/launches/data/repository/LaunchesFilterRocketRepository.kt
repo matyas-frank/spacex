@@ -21,6 +21,7 @@ class LaunchesFilterRocketRepository(
     }
 
     override suspend fun saveRockets(ids: Set<String>) {
+        filtersDao.changeLastUpdated(null)
         filtersDao.setRocketsIds(ids)
     }
 }
