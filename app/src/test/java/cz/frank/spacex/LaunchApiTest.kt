@@ -1,6 +1,7 @@
 package cz.frank.spacex
 
 import cz.frank.spacex.launches.data.api.LaunchesAPI
+import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.shared.data.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -14,7 +15,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.buildJsonObject
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -66,7 +66,17 @@ class LaunchApiTest {
             )
         }
         val api = launchesApi(engine)
-        val response = api.allLaunches(query = buildJsonObject {  }, limit = 10, page = 21)
+        val response = api.allLaunches(
+            query =
+                ILaunchesFilterRepository.Filters(
+                    false,
+                    false,
+                    setOf(),
+                    "",
+                ),
+            limit = 10,
+            page = 21
+        )
         assertTrue(response.isSuccess)
         response.getOrNull()?.let {
             assertEquals(1, it.docs.size)
@@ -146,7 +156,14 @@ class LaunchApiTest {
 
     private suspend fun failureRequest(code: HttpStatusCode, check: Result<*>.() -> Boolean) {
         val api = launchesApi(failureEngine(code))
-        val response = api.allLaunches(query = buildJsonObject {  }, limit = 10, page = 21)
+        val response = api.allLaunches(
+            query = ILaunchesFilterRepository.Filters(
+                false,
+                false,
+                setOf(),
+                "",
+            ), limit = 10, page = 21
+        )
         assertTrue(response.isFailure)
         assert(response.check())
     }

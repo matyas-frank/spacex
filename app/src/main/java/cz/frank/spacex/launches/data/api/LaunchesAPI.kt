@@ -1,17 +1,20 @@
 package cz.frank.spacex.launches.data.api
 
+import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.shared.data.*
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
+import kotlinx.serialization.json.*
 
 interface ILaunchesAPI {
-    suspend fun allLaunches(query: JsonElement, limit: Int, page: Int): Result<PaginatedResponse<LaunchPreviewResponse>>
+    suspend fun allLaunches(
+        query: ILaunchesFilterRepository.Filters,
+        limit: Int,
+        page: Int
+    ): Result<PaginatedResponse<LaunchPreviewResponse>>
     suspend fun specificLaunch(id: String): Result<LaunchDetailResponse>
 
     @Serializable data class LaunchPreviewResponse(
@@ -52,12 +55,12 @@ interface ILaunchesAPI {
 }
 
 class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
-    override suspend fun allLaunches(query: JsonElement, limit: Int, page: Int) =
+    override suspend fun allLaunches(query: ILaunchesFilterRepository.Filters, limit: Int, page: Int) =
         runCatching<PaginatedResponse<ILaunchesAPI.LaunchPreviewResponse>> {
             httpClient.post("$BASE_LAUNCHES_URL/query") {
                 setBody(
                     RequestBody(
-                        query,
+                        query.toJson(),
                         RequestOptions(
                             select = buildSelection {
                                 select("name")
@@ -77,6 +80,25 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                 )
             }.body()
         }
+
+    private fun ILaunchesFilterRepository.Filters.toJson() = buildJsonObject {
+        if (!(isUpcomingSelected && isLaunchedSelected)) {
+            put("upcoming", isUpcomingSelected)
+        }
+        if (rocketsCount.isNotEmpty()) {
+            put("rocket", buildJsonObject {
+                putJsonArray("\$in") {
+                    rocketsCount.forEach { this.add(it) }
+                }
+            })
+        }
+        if (query.isNotBlank()) {
+            put("name", buildJsonObject {
+                put("\$regex", query)
+                put("\$options", "i")
+            })
+        }
+    }
 
     override suspend fun specificLaunch(id: String) =
         runCatching<ILaunchesAPI.LaunchDetailResponse> {
