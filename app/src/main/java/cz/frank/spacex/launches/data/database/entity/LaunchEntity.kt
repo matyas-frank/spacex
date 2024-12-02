@@ -10,5 +10,5 @@ data class LaunchEntity(
     val image: String?,
     val upcoming: Boolean,
     val success: Boolean?,
-    val rocketId: String,
+    val rocket: String,
 )
