@@ -297,7 +297,7 @@ private fun Preview() {
             Column {
                 LaunchItem(
                     LaunchPreviewModel(
-                        id = 1,
+                        id = "1",
                         title = "FalconSat",
                         patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
                         rocket = "Falcon 1",
@@ -309,7 +309,7 @@ private fun Preview() {
                 HorizontalDivider()
                 LaunchItem(
                     LaunchPreviewModel(
-                        id = 1,
+                        id = "1",
                         title = "FalconSat",
                         patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
                         rocket = "Falcon 1",
@@ -321,7 +321,7 @@ private fun Preview() {
                 HorizontalDivider()
                 LaunchItem(
                     LaunchPreviewModel(
-                        id = 1,
+                        id = "1",
                         title = "FalconSat",
                         patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
                         rocket = "Falcon 1",

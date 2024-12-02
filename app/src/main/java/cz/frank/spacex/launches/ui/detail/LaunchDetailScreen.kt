@@ -75,4 +75,4 @@ import kotlinx.parcelize.Parcelize
 }
 
 @Parcelize
-data class LaunchDetail(val id: Int) : Parcelable
+data class LaunchDetail(val id: String) : Parcelable
