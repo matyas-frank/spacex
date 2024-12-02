@@ -24,7 +24,6 @@ fun NavGraphBuilder.launchesNavigation(navHostController: NavHostController, tog
         composable<LaunchesNavigation.Rockets> {
             LaunchFilterRocketScreen(
                 onBackClick = { navHostController.navigateUp() }
-
             )
         }
     }
