@@ -8,6 +8,7 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
@@ -117,13 +118,21 @@ class LaunchApiTest {
 
     @Test
     fun detailRequest() = runTest {
-        val api = LaunchesAPI(HttpClient("api.spacexdata.com", OkHttp.create()))
+        val api = LaunchesAPI(HttpClient("api.spacexdata.com", OkHttp.create(), object : Logger {
+            override fun log(message: String) {
+                println(message)
+            }
+        }))
         val response = api.specificLaunch("633f72000531f07b4fdf59c2")
         println(response)
         assertTrue(response.isSuccess)
     }
 
-    private fun launchesApi(engine: MockEngine) = LaunchesAPI(HttpClient("api.spacexdata.com", engine))
+    private fun launchesApi(engine: MockEngine) = LaunchesAPI(HttpClient("api.spacexdata.com", engine, object : Logger {
+        override fun log(message: String) {
+            println(message)
+        }
+    }))
 
     private fun failureEngine(code: HttpStatusCode) = MockEngine { _ ->
         respond(
