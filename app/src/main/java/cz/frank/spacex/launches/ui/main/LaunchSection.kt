@@ -1,9 +1,10 @@
 package cz.frank.spacex.launches.ui.main
 
-import android.os.Parcelable
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
@@ -11,6 +12,7 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
 import cz.frank.spacex.launches.ui.LaunchesNavigation
 import cz.frank.spacex.launches.ui.detail.LaunchDetail
@@ -73,7 +75,10 @@ private fun Layout(
 
                 }
             },
-            modifier = modifier,
+            modifier = modifier.run {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) windowInsetsPadding(WindowInsets.displayCutout)
+                else this
+            }
         )
     }
 }
