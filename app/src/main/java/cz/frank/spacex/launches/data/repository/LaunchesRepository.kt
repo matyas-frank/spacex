@@ -16,7 +16,7 @@ class LaunchesRepository(
  ) : KoinComponent {
 
     @OptIn(ExperimentalPagingApi::class)
-    fun getPager(filters: ILaunchesFilterRepository.Filters) = Pager(
+    fun pagedLaunches(filters: ILaunchesFilterRepository.Filters) = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
         pagingSourceFactory = { launchDao.getAllLaunches() },
         remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE) } .value

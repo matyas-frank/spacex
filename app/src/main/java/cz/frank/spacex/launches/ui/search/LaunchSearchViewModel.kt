@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class LaunchSearchViewModel(
     private val filterRepository: ILaunchesFilterRepository,
-    private val pagingRepository: LaunchesRepository,
+    private val launchesRepository: LaunchesRepository,
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
@@ -34,7 +34,7 @@ class LaunchSearchViewModel(
         .allFilters
         .distinctUntilChanged()
         .debounce(400.milliseconds)
-        .mapLatest { pagingRepository.getPager(it).cachedIn(viewModelScope) }
+        .mapLatest { launchesRepository.pagedLaunches(it).cachedIn(viewModelScope) }
         .distinctUntilChanged()
         .stateIn(
             viewModelScope,
@@ -44,11 +44,11 @@ class LaunchSearchViewModel(
 
     fun onQueryChange(query: String) {
         _query.value = query
-        triggerSearch()
+        saveQuery()
     }
     fun eraseQuery() = onQueryChange("")
 
-    private fun triggerSearch() {
+    private fun saveQuery() {
        viewModelScope.launch { filterRepository.setQuery(query.value) }
     }
 
