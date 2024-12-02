@@ -97,7 +97,6 @@ dependencies {
     implementation(libs.ktor.client.serialization.json)
     implementation(libs.ktor.client.logging)
     testImplementation(libs.ktor.client.mock)
-    implementation(libs.logback)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
