@@ -9,6 +9,7 @@ data class RequestBody(val query: JsonElement = JsonObject(mapOf()), val options
 @Serializable
 data class RequestOptions(
     val select: JsonElement,
+    val sort: JsonElement = JsonObject(mapOf()),
     val limit: Int = 10,
     val page: Int = 21,
     val populate: List<JsonElement> = listOf()
