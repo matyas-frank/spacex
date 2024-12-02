@@ -4,11 +4,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -16,108 +16,30 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.SearchBarDefaults.InputField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.ui.detail.LaunchDetail
 import cz.frank.spacex.shared.ui.theme.SpaceXTheme
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.compose.viewmodel.koinViewModel
-
-// Create some simple sample data
-val data = listOf(
-    LaunchPreviewModel(
-        id = 1,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(true)
-    ),
-    LaunchPreviewModel(
-        id = 2,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(false)
-    ),
-    LaunchPreviewModel(
-        id = 3,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Upcoming
-    ),
-    LaunchPreviewModel(
-        id = 4,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(true)
-    ),
-    LaunchPreviewModel(
-        id = 5,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(false)
-    ),
-    LaunchPreviewModel(
-        id = 6,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Upcoming
-    ),
-    LaunchPreviewModel(
-        id = 7,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(true)
-    ),
-    LaunchPreviewModel(
-        id = 8,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(false)
-    ),
-    LaunchPreviewModel(
-        id = 9,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Upcoming
-    ),
-    LaunchPreviewModel(
-        id = 10,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(true)
-    ),
-    LaunchPreviewModel(
-        id = 11,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Launched(false)
-    ),
-    LaunchPreviewModel(
-        id = 12,
-        title = "FalconSat",
-        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
-        rocket = "Falcon 1",
-        state = LaunchPreviewModel.State.Upcoming
-    ),
-)
 
 @Composable fun LaunchesSearchScreen(
     navigateToFilter: () -> Unit,
@@ -127,9 +49,12 @@ val data = listOf(
     modifier: Modifier = Modifier,
     vm: LaunchSearchViewModel = koinViewModel(),
 ) {
-    val query by vm.query.collectAsState()
-    val isAnyFilterActive by vm.isAnyFilterActive.collectAsState()
+    val query by vm.query.collectAsStateWithLifecycle()
+    val isAnyFilterActive by vm.isAnyFilterActive.collectAsStateWithLifecycle()
+    val items = vm.pager.collectAsStateWithLifecycle().value?.collectAsLazyPagingItems()
+
     LaunchesScreenLayout(
+        items,
         query,
         isAnyFilterActive,
         vm::onQueryChange,
@@ -144,8 +69,9 @@ val data = listOf(
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 private fun LaunchesScreenLayout(
+    items: LazyPagingItems<LaunchPreviewModel>?,
     query: String,
     isAnyFilterActive: Boolean,
     onQueryChange: (String) -> Unit,
@@ -201,11 +127,116 @@ private fun LaunchesScreenLayout(
         },
     ) {
         Surface(Modifier.padding(it)) {
-            LazyColumn(verticalArrangement = Arrangement.Top) {
-                items(data.toList()) { launch ->
-                    LaunchItem(launch, navigateToDetail, textAnimationModifier)
+            items?.let { items ->
+                var isIndicatorVisible by remember { mutableStateOf(false) }
+                val state = rememberPullToRefreshState()
+                LaunchedEffect(items.loadState.refresh) {
+                    if (items.loadState.refresh is LoadState.NotLoading) isIndicatorVisible = false
+                }
+                PullToRefreshBox(
+                    items.loadState.refresh is LoadState.Loading && isIndicatorVisible,
+                    onRefresh = {
+                        isIndicatorVisible = true
+                        items.refresh()
+                    },
+                    Modifier.fillMaxWidth(),
+                    state,
+                    indicator = {
+                        Indicator(
+                            state = state,
+                            modifier = Modifier.align(Alignment.TopCenter),
+                            isRefreshing = items.loadState.refresh is LoadState.Loading,
+
+                        )
+                    },
+                ) {
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        if (items.loadState.refresh == LoadState.Loading) {
+                            stickyHeader {
+                                RefreshLoadingIndicator()
+                            }
+                        }
+                        if (items.loadState.refresh is LoadState.Error) {
+                            item {
+                                RefreshButton { items.refresh() }
+                            }
+                        }
+
+                        items(
+                            items.itemCount,
+                            key = items.itemKey { it.id }
+                        ) { index ->
+                            items[index]?.let {
+                                LaunchItem(it, navigateToDetail, textAnimationModifier)
+                            } ?: PlaceHolder()
+                        }
+
+                        item {
+                            when {
+                                items.loadState.refresh is LoadState.Error -> {
+                                    RefreshButton { items.refresh() }
+                                }
+
+                                items.loadState.append is LoadState.Error -> {
+                                    RetryButton { items.retry() }
+                                }
+
+                                items.loadState.append == LoadState.Loading -> {
+                                    AppendLoadingIndicator()
+                                }
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+@Composable private fun RetryButton(onRefreshClick: () -> Unit) {
+    Button(onClick = onRefreshClick, Modifier.padding(16.dp)) {
+        Text(stringResource(R.string.launch_search_retry_button))
+    }
+}
+
+@Composable private fun RefreshButton(onRefreshClick: () -> Unit) {
+    Button(onClick = onRefreshClick, Modifier.padding(16.dp)) {
+        Text(stringResource(R.string.launch_search_refresh_button))
+    }
+}
+
+@Composable private fun RefreshLoadingIndicator() {
+    LinearProgressIndicator(Modifier.fillMaxWidth())
+}
+
+@Composable private fun AppendLoadingIndicator() {
+    CircularProgressIndicator(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .wrapContentWidth(Alignment.CenterHorizontally)
+    )
+}
+
+@Composable private fun PlaceHolder() {
+    val color = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+    Surface(
+        Modifier
+            .height(80.dp)
+            .fillMaxWidth()) {
+        Row(
+            Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(Modifier.size(50.dp), shape = RectangleShape, color = color) {}
+            Surface(
+                Modifier
+                    .padding(16.dp)
+                    .height(20.dp)
+                    .fillMaxWidth(), shape = RectangleShape, color = color) {}
+
         }
     }
 }
@@ -245,16 +276,19 @@ private fun LaunchesScreenLayout(
                     )
                 }
                 is LaunchPreviewModel.State.Launched ->
-                    Icon(if (state.wasSuccessful) Icons.Default.Check else Icons.Default.Close,
-                        null,
-                        Modifier.size(iconSize)
-                    )
+                    state.wasSuccessful?.let {
+                        Icon(
+                            if (state.wasSuccessful) Icons.Default.Check else Icons.Default.Close,
+                            null,
+                            Modifier.size(iconSize)
+                        )
+                    }
             }
         }
     }
 }
 
-@Composable private fun LaunchItemImage(url: String) {
+@Composable private fun LaunchItemImage(url: String?) {
     val imagePainter = rememberAsyncImagePainter(
         url,
         onState = {  }
@@ -272,11 +306,105 @@ private fun LaunchesScreenLayout(
     }
 }
 
+val data = listOf(
+    LaunchPreviewModel(
+        id = "1",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(true)
+    ),
+    LaunchPreviewModel(
+        id = "2",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(false)
+    ),
+    LaunchPreviewModel(
+        id = "3",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Upcoming
+    ),
+    LaunchPreviewModel(
+        id = "4",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(true)
+    ),
+    LaunchPreviewModel(
+        id = "5",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(false)
+    ),
+    LaunchPreviewModel(
+        id = "6",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Upcoming
+    ),
+    LaunchPreviewModel(
+        id = "7",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(true)
+    ),
+    LaunchPreviewModel(
+        id = "8",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(false)
+    ),
+    LaunchPreviewModel(
+        id = "9",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Upcoming
+    ),
+    LaunchPreviewModel(
+        id = "10",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/40/e3/GypSkayF_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(true)
+    ),
+    LaunchPreviewModel(
+        id = "11",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/75/39/TJU6xWM5_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Launched(false)
+    ),
+    LaunchPreviewModel(
+        id = "12",
+        title = "FalconSat",
+        patch = "https://images2.imgbox.com/a6/9b/IzWT1pYC_o.png",
+        rocket = "Falcon 1",
+        state = LaunchPreviewModel.State.Upcoming
+    ),
+)
 
 @Preview
 @Composable
-private fun Preview() {
+private fun ScreenPreview() {
+    val flow = remember {
+        val fakeData = data // create pagingData from a list of fake data
+        val pagingData = PagingData.from(fakeData)
+        MutableStateFlow(pagingData)
+    }
+    val items = flow.collectAsLazyPagingItems()
+
     LaunchesScreenLayout(
+        items,
         "Query",
         true,
         { _ -> },
@@ -334,6 +462,17 @@ private fun Preview() {
         }
     }
 }
+
+
+@Preview
+@Composable
+private fun PlaceHolderPreview() {
+    SpaceXTheme {
+        PlaceHolder()
+
+    }
+}
+
 
 val a = """
     {
