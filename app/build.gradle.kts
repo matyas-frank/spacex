@@ -107,6 +107,8 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.androidlinkview)
+    implementation(libs.youtube.core)
 }
 
 detekt {

@@ -6,6 +6,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
@@ -40,17 +41,28 @@ interface ILaunchesAPI {
         val name: String,
         val links: Links,
         val rocket: Rocket,
+        val launchpad: Launchpad?,
         val upcoming: Boolean,
         val success: Boolean?,
+        val details: String?,
+        @SerialName("date_unix") val date: Long,
+        @SerialName("flight_number") val flightNumber: Int,
+        val fairings: Fairings,
     ) {
         @Serializable
         data class Rocket(val name: String)
 
         @Serializable
-        data class Links(val patch: Patch) {
+        data class Launchpad(@SerialName("full_name") val name: String)
+
+        @Serializable
+        data class Links(val patch: Patch, @SerialName("youtube_id") val youtubeId: String?, val article: String?) {
             @Serializable
             data class Patch(val small: String?)
         }
+
+        @Serializable
+        data class Fairings(val recovered: Boolean?)
     }
 }
 
@@ -74,9 +86,9 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                             limit = limit,
                             page = page,
                             populate = listOf(
-                                rocketPopulation {
+                                population("rocket") {
                                     select("name")
-                                }
+                                },
                             )
                         )
                     )
@@ -108,19 +120,28 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
             httpClient.post("$BASE_LAUNCHES_URL/query") {
                 setBody(
                     RequestBody(
-                        buildJsonObject { put("id", id) },
+                        buildJsonObject { put("_id", id) },
                         RequestOptions(
                             select = buildSelection {
                                 select("name")
                                 select("links.patch.small")
+                                select("links.article")
                                 select("success")
                                 select("upcoming")
+                                select("flight_number")
+                                select("links.youtube_id")
+                                select("date_unix")
+                                select("details")
+                                select("fairings.recovered")
                             },
                             limit = 1,
                             page = 1,
                             populate = listOf(
-                                rocketPopulation {
+                                population("rocket") {
                                     select("name")
+                                },
+                                population("launchpad") {
+                                    select("full_name")
                                 }
                             )
                         )
@@ -129,8 +150,11 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
             }.body<PaginatedResponse<ILaunchesAPI.LaunchDetailResponse>>().docs.first()
         }
 
-    private fun rocketPopulation(selection: SelectionBuilder.() -> Unit) = buildJsonObject {
-        put("path", "rocket")
+    private fun population(
+        attribute: String,
+        selection: SelectionBuilder.() -> Unit
+    ) = buildJsonObject {
+        put("path", attribute)
         putSelection(selection)
     }
 
