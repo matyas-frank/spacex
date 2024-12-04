@@ -1,5 +1,7 @@
 [versions]
 agp = "8.7.2"
+androidlinkview = "1.0.1"
+core = "12.1.1"
 datastorePreferences = "1.1.1"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
@@ -26,6 +28,7 @@ androix-navigation-compose = "2.8.4"
 kotlinx-datetime = "0.6.1"
 
 [libraries]
+androidlinkview = { module = "com.github.lukasroberts:AndroidLinkView", version.ref = "androidlinkview" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -34,6 +37,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name ="ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
+youtube-core = { module = "com.pierfrancescosoffritti.androidyoutubeplayer:core", version.ref = "core" }
 detekt-compose = { group = "com.twitter.compose.rules", name = "detekt", version.ref = "detektCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

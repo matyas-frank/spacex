@@ -12,4 +12,10 @@
     <string name="launches_filter_chip_launched">Launched</string>
     <string name="launches_filter_chip_upcoming">Upcoming</string>
     <string name="launches_filter_rockets">Rockets</string>
+
+    <string name="launches_detail_fairings_recovered">Fairings recovered</string>
+    <string name="launches_detail_launched">Launched</string>
+    <string name="launches_detail_date_format">HH:mm dd.MM.yyyy</string>
+    <string name="launches_detail_link">Link</string>
+
 </resources>

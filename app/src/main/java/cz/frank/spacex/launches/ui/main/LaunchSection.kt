@@ -67,18 +67,14 @@ private fun Layout(
                     navigator.currentDestination?.content?.let {
                         LaunchDetailScreen(
                             it,
-                            navigator,
-                            this@AnimatedPane,
-                            this@SharedTransitionLayout
+                            navigator.canNavigateBack(),
+                            { if (navigator.canNavigateBack()) navigator.navigateBack() },
                         )
                     }
 
                 }
             },
-            modifier = modifier.run {
-                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) windowInsetsPadding(WindowInsets.displayCutout)
-                else this
-            }
+            modifier = modifier
         )
     }
 }
