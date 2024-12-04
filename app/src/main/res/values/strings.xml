@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">SpaceX</string>
-    <string name="drawer_dragons">Ships</string>
+    <string name="drawer_launches">Launches</string>
     <string name="drawer_starlink">Starlink</string>
 
-    <string name="dragon_search">Ships</string>
+    <string name="launch_search">Launches</string>
+    <string name="launch_search_input_field_placeholder">Search for launches</string>
+    <string name="launch_search_refresh_button">Refresh</string>
+    <string name="launch_search_retry_button">Retry</string>
+
+    <string name="launches_filter_title">Filters</string>
+    <string name="launches_filter_chip_launched">Launched</string>
+    <string name="launches_filter_chip_upcoming">Upcoming</string>
+    <string name="launches_filter_rockets">Rockets</string>
 </resources>

@@ -4,24 +4,26 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import cz.frank.spacex.ships.ui.ShipsNavigation
-import cz.frank.spacex.ships.ui.dragonsNavigation
-import cz.frank.spacex.starlink.StarlinkNavigation
+import cz.frank.spacex.launches.ui.launchesNavigation
 import cz.frank.spacex.starlink.starlinkNavigation
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 
 @Composable fun SpaceXApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    var selectedDrawerSection by rememberSaveable { mutableStateOf(DrawerItem.Ships) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     fun toggleDrawer() {
         scope.launch {
             drawerState.apply {
@@ -32,14 +34,12 @@ import kotlinx.coroutines.launch
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(
-                selectedDrawerSection,
+                isDrawerItemSelected = { drawerItem ->
+                    currentDestination?.hierarchy?.any { it.hasRoute(drawerItem::class) } == true
+                },
                 onItemClick = {
-                    selectedDrawerSection = it
                     toggleDrawer()
-                    when (it) {
-                        DrawerItem.Ships -> { navController.drawerItemNavigation(ShipsNavigation) }
-                        DrawerItem.Starlink -> { navController.drawerItemNavigation(StarlinkNavigation) }
-                    }
+                    navController.drawerItemNavigation(it)
                 },
             )
         },
@@ -54,16 +54,17 @@ import kotlinx.coroutines.launch
     navController: NavHostController,
     toggleDrawer: () -> Unit
 ) {
-    NavHost(navController, ShipsNavigation) {
+    NavHost(navController, NavigationDrawerItem.Launches) {
         spaceXNavigationGraph(
-            toggleDrawer = toggleDrawer
+            navController,
+            toggleDrawer
         )
     }
 }
 
-private fun NavGraphBuilder.spaceXNavigationGraph(toggleDrawer: () -> Unit) {
-    dragonsNavigation(toggleDrawer)
-    starlinkNavigation(toggleDrawer)
+private fun NavGraphBuilder.spaceXNavigationGraph(navHostController: NavHostController, toggleDrawer: () -> Unit) {
+    launchesNavigation(navHostController, toggleDrawer)
+    starlinkNavigation(navHostController, toggleDrawer)
 }
 
 private fun NavHostController.drawerItemNavigation(item: Any) {
@@ -74,4 +75,9 @@ private fun NavHostController.drawerItemNavigation(item: Any) {
         launchSingleTop = true
         restoreState = true
     }
+}
+
+sealed interface NavigationDrawerItem {
+    @Serializable data object Launches : NavigationDrawerItem
+    @Serializable data object Starlink : NavigationDrawerItem
 }

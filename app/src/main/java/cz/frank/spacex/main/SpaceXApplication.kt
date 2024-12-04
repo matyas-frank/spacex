@@ -14,9 +14,7 @@ class SpaceXApplication : Application(){
         startKoin {
             androidLogger()
             androidContext(this@SpaceXApplication)
-            loadKoinModules(
-                spaceXModule
-            )
+            loadKoinModules(spaceXModule)
         }
     }
 }

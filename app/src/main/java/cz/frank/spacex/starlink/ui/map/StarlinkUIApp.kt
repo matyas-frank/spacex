@@ -8,8 +8,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 
-@Composable fun StarlinkMap(toggleDrawer: () -> Unit, modifier: Modifier = Modifier, ) {
+@Composable fun StarlinkMap(
+    navHostController: NavHostController,
+    toggleDrawer: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Scaffold(Modifier.fillMaxSize()) {
         Surface(Modifier.padding(it)) {
             Text("Starlink", modifier.clickable { toggleDrawer() })

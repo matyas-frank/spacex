@@ -12,6 +12,10 @@ android {
     namespace = "cz.frank.spacex"
     compileSdk = 35
 
+    packaging {
+        resources.excludes += "/META-INF/INDEX.LIST"
+    }
+
     defaultConfig {
         applicationId = "cz.frank.spacex"
         minSdk = 28
@@ -20,6 +24,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+        }
     }
 
     buildTypes {
@@ -73,6 +81,7 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.core.viewmodel)
     implementation(libs.koin.android)
+    implementation(libs.koin.compose.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
 
@@ -83,15 +92,21 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.negotiation)
     implementation(libs.ktor.client.serialization.json)
     implementation(libs.ktor.client.logging)
-    implementation(libs.slf4j)
+    testImplementation(libs.ktor.client.mock)
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
+    implementation(libs.kotlinx.datetime)
+    testImplementation(libs.koin.test)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.paging.compose)
 }
 
 detekt {

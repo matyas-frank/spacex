@@ -14,14 +14,14 @@ import cz.frank.spacex.R
 
 
 @Composable fun ModalDrawerSheet(
-    selectedDrawerSection: DrawerItem,
+    isDrawerItemSelected: (NavigationDrawerItem) -> Boolean,
     modifier: Modifier = Modifier,
-    onItemClick: (DrawerItem) -> Unit
+    onItemClick: (NavigationDrawerItem) -> Unit
 ) {
     ModalDrawerSheet(modifier) {
         Header()
         HorizontalDivider(Modifier.padding(vertical = 16.dp))
-        DrawerItems(onItemClick, selectedDrawerSection)
+        DrawerItems(onItemClick, isDrawerItemSelected)
     }
 }
 
@@ -29,31 +29,47 @@ import cz.frank.spacex.R
     Text("SPACEX", modifier = Modifier.padding(16.dp))
 }
 
-@Composable private fun DrawerItems(onItemClick: (DrawerItem) -> Unit, selectedDrawerSection: DrawerItem) {
+@Composable private fun DrawerItems(
+    onItemClick: (NavigationDrawerItem) -> Unit,
+    isDrawerItemSelected: (NavigationDrawerItem) -> Boolean
+) {
     Column {
         drawerItems.forEach {
-            DrawerItem(it, it.id == selectedDrawerSection, onItemClick)
+            DrawerItem(it, isDrawerItemSelected(it.destination), onItemClick)
         }
     }
 }
 
-@Composable private fun DrawerItem(item: DrawerItemUI, isSelected: Boolean, onItemClick: (DrawerItem) -> Unit) {
+@Composable private fun DrawerItem(
+    item: DrawerItemUI,
+    isSelected: Boolean,
+    onItemClick: (NavigationDrawerItem) -> Unit
+) {
     NavigationDrawerItem(
         label = { Text(stringResource(item.name)) },
         selected = isSelected,
-        onClick = { onItemClick(item.id) },
+        onClick = { onItemClick(item.destination) },
         modifier = Modifier.padding(horizontal = 16.dp),
         icon = { Icon(painterResource(item.icon), null) }
     )
 }
 
 private val drawerItems = listOf(
-    DrawerItemUI(DrawerItem.Ships, R.string.drawer_dragons, R.drawable.ic_rocket),
-    DrawerItemUI(DrawerItem.Starlink, R.string.drawer_starlink, R.drawable.ic_satellite)
+    DrawerItemUI(
+        R.string.drawer_launches,
+        R.drawable.ic_rocket,
+        NavigationDrawerItem.Launches
+    ),
+    DrawerItemUI(
+        R.string.drawer_starlink,
+        R.drawable.ic_satellite,
+        NavigationDrawerItem.Starlink
+    )
 )
 
-private data class DrawerItemUI(val id: DrawerItem, @StringRes val name: Int, @DrawableRes val icon: Int)
+private data class DrawerItemUI(
+    @StringRes val name: Int,
+    @DrawableRes val icon: Int,
+    val destination: NavigationDrawerItem
+)
 
-enum class DrawerItem {
-    Ships, Starlink
-}
