@@ -1,5 +1,7 @@
 package cz.frank.spacex.launches.ui
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -21,7 +23,10 @@ fun NavGraphBuilder.launchesNavigation(navHostController: NavHostController, tog
                 toggleDrawer,
             )
         }
-        composable<LaunchesNavigation.Detail> {
+        composable<LaunchesNavigation.Detail>(
+            enterTransition = { slideInHorizontally{ it } },
+            exitTransition = { slideOutHorizontally { it } }
+        ) {
             val id = it.toRoute<LaunchesNavigation.Detail>().id
             LaunchDetailScreen(id, { navHostController.navigateUp() })
         }
