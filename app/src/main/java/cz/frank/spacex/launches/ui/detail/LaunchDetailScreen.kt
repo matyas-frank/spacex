@@ -296,7 +296,12 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
                 }
                 article.description?.let {
                     if (it.isNotBlank()) {
-                        Text(it, style = MaterialTheme.typography.labelLarge, maxLines = 3, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelLarge,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
             }
@@ -348,7 +353,6 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
             CircularProgressIndicator()
         }
     }
-
 }
 
 @Parcelize data class LaunchDetail(val id: String) : Parcelable

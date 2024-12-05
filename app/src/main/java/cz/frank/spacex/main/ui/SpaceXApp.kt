@@ -64,7 +64,7 @@ import kotlinx.serialization.Serializable
 
 private fun NavGraphBuilder.spaceXNavigationGraph(navHostController: NavHostController, toggleDrawer: () -> Unit) {
     launchesNavigation(navHostController, toggleDrawer)
-    crewNavigation(navHostController, toggleDrawer)
+    crewNavigation(toggleDrawer)
 }
 
 private fun NavHostController.drawerItemNavigation(item: Any) {
