@@ -99,17 +99,19 @@ import kotlinx.parcelize.Parcelize
             )
         },
     ) {
+        val scroll = rememberScrollState()
         Column(
-            Modifier.padding(it)) {
+            Modifier
+                .padding(it)
+                .verticalScroll(scroll)
+        ) {
             model.youtubeId?.let {
                 YoutubePlayer(it)
             }
-            val scroll = rememberScrollState()
             Column(
                 Modifier
                     .padding(16.dp)
-                    .fillMaxSize()
-                    .verticalScroll(scroll)) {
+                    .fillMaxSize()) {
                 model.launchpad?.let {
                     IconTextSection(R.drawable.ic_pin_drop, it.name)
                     HorizontalDivider()
