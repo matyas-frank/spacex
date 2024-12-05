@@ -1,4 +1,4 @@
-package cz.frank.spacex.starlink.ui.map
+package cz.frank.spacex.crew.ui.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
-@Composable fun StarlinkMap(
+@Composable fun CrewSearchScreen(
     navHostController: NavHostController,
     toggleDrawer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(Modifier.fillMaxSize()) {
         Surface(Modifier.padding(it)) {
-            Text("Starlink", modifier.clickable { toggleDrawer() })
+            Text("Crew", modifier.clickable { toggleDrawer() })
         }
     }
 }
