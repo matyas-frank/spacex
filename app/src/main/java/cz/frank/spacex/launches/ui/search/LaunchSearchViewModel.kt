@@ -38,7 +38,7 @@ class LaunchSearchViewModel(
         .distinctUntilChanged()
         .stateIn(
             viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Lazily,
             null
         )
 
