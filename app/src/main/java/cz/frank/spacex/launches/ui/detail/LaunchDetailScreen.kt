@@ -171,9 +171,11 @@ import kotlinx.parcelize.Parcelize
         verticalAlignment = Alignment.CenterVertically
     ) {
         val iconSize = 28.dp
-        TextWithSuccessIcon(R.string.launches_detail_launched) {
-            LaunchIcon(iconSize, model.state)
-        }
+        TextWithSuccessIcon(
+            if (model.state is LaunchDetailModel.State.Upcoming)
+                R.string.launches_detail_upcoming
+            else R.string.launches_detail_launched
+        ) { LaunchIcon(iconSize, model.state) }
         model.fairingsRecovered?.let { recovered ->
             Spacer(Modifier.weight(1f))
             TextWithSuccessIcon(R.string.launches_detail_fairings_recovered) {
