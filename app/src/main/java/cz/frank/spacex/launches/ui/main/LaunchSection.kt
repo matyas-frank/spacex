@@ -67,7 +67,6 @@ private fun Layout(
                     navigator.currentDestination?.content?.let {
                         LaunchDetailScreen(
                             it,
-                            navigator.canNavigateBack(),
                             { if (navigator.canNavigateBack()) navigator.navigateBack() },
                         )
                     }

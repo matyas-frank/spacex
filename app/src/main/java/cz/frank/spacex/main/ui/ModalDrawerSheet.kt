@@ -63,7 +63,7 @@ private val drawerItems = listOf(
     DrawerItemUI(
         R.string.drawer_starlink,
         R.drawable.ic_satellite,
-        NavigationDrawerItem.Starlink
+        NavigationDrawerItem.NextLaunch
     )
 )
 

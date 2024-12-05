@@ -14,7 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import cz.frank.spacex.launches.ui.launchesNavigation
-import cz.frank.spacex.starlink.starlinkNavigation
+import cz.frank.spacex.starlink.nextLaunchNavigation
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -64,7 +64,7 @@ import kotlinx.serialization.Serializable
 
 private fun NavGraphBuilder.spaceXNavigationGraph(navHostController: NavHostController, toggleDrawer: () -> Unit) {
     launchesNavigation(navHostController, toggleDrawer)
-    starlinkNavigation(navHostController, toggleDrawer)
+    nextLaunchNavigation(navHostController, toggleDrawer)
 }
 
 private fun NavHostController.drawerItemNavigation(item: Any) {
@@ -79,5 +79,5 @@ private fun NavHostController.drawerItemNavigation(item: Any) {
 
 sealed interface NavigationDrawerItem {
     @Serializable data object Launches : NavigationDrawerItem
-    @Serializable data object Starlink : NavigationDrawerItem
+    @Serializable data object NextLaunch : NavigationDrawerItem
 }

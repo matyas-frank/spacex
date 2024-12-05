@@ -8,6 +8,7 @@ import cz.frank.spacex.launches.ui.filter.LaunchFilterViewModel
 import cz.frank.spacex.launches.ui.filter.rocket.LaunchFilterRocketViewModel
 import cz.frank.spacex.launches.ui.search.LaunchSearchViewModel
 import cz.frank.spacex.main.data.SpaceXDatabase
+import cz.frank.spacex.launches.ui.next.NextLaunchViewModel
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -27,8 +28,8 @@ val launchesModule = module {
         LaunchesMediator(get(), get(), get(), get(), filters, get(), pageSize)
     }
 
-
     viewModelOf(::LaunchSearchViewModel)
     viewModelOf(::LaunchFilterViewModel)
     viewModelOf(::LaunchFilterRocketViewModel)
+    viewModelOf(::NextLaunchViewModel)
 }

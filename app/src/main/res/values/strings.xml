@@ -18,4 +18,11 @@
     <string name="launches_detail_date_format">HH:mm dd.MM.yyyy</string>
     <string name="launches_detail_link">Link</string>
 
+    <string name="next_launch_title">Next launch</string>
+    <string name="next_launch_days">Days</string>
+    <string name="next_launch_hours">Hours</string>
+    <string name="next_launch_minutes">Minutes</string>
+    <string name="next_launch_seconds">Seconds</string>
+
+
 </resources>
