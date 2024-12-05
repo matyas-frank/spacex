@@ -47,16 +47,14 @@ import kotlinx.parcelize.Parcelize
 
 
 @Composable fun LaunchDetailScreen(
-    selectedTopic: LaunchDetail,
-    canNavigateBack: Boolean,
+    launchId: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    vm: LaunchDetailViewModel = viewModel(key = selectedTopic.id) { LaunchDetailViewModel(selectedTopic.id) }
+    vm: LaunchDetailViewModel = viewModel(key = launchId) { LaunchDetailViewModel(launchId) }
 ) {
     val item by vm.launch.collectAsStateWithLifecycle()
     val article by vm.article.collectAsStateWithLifecycle()
     LaunchDetailScreenLayout(
-        canNavigateBack,
         onBackClick,
         item,
         article,
@@ -66,7 +64,6 @@ import kotlinx.parcelize.Parcelize
 }
 
 @Composable private fun LaunchDetailScreenLayout(
-    canNavigateBack: Boolean,
     onBackClick: () -> Unit,
     model: Result<LaunchDetailModel>?,
     article: Result<OpenGraphMetaData>?,
@@ -75,7 +72,7 @@ import kotlinx.parcelize.Parcelize
 ) {
     model?.let { model ->
         model.onSuccess {
-            SuccessScreen(it, article, canNavigateBack, onBackClick, modifier)
+            SuccessScreen(it, article, onBackClick, modifier)
         }.onFailure {
             FailureScreen(retry = retry)
         }
@@ -86,7 +83,6 @@ import kotlinx.parcelize.Parcelize
 @Composable private fun SuccessScreen(
     model: LaunchDetailModel,
     articleMetaData: Result<OpenGraphMetaData>?,
-    canNavigateBack: Boolean,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,7 +92,7 @@ import kotlinx.parcelize.Parcelize
             TopAppBar(
                 title = { Text("${model.flightNumber}.${model.name}") },
                 navigationIcon = {
-                    if (canNavigateBack) IconButton({ onBackClick() }) {
+                    IconButton({ onBackClick() }) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, null)
                     }
                 }

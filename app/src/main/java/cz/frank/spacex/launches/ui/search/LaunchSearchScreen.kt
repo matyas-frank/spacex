@@ -45,7 +45,6 @@ import org.koin.compose.viewmodel.koinViewModel
     navigateToFilter: () -> Unit,
     navigateToDetail: (LaunchDetail) -> Unit,
     toggleDrawer: () -> Unit,
-    textAnimationModifier: @Composable (LaunchDetail) -> Modifier,
     modifier: Modifier = Modifier,
     vm: LaunchSearchViewModel = koinViewModel(),
 ) {
@@ -64,7 +63,6 @@ import org.koin.compose.viewmodel.koinViewModel
         vm::eraseQuery,
         navigateToFilter,
         modifier,
-        textAnimationModifier,
     )
 }
 
@@ -81,7 +79,6 @@ private fun LaunchesScreenLayout(
     onEraseQueryClick: () -> Unit,
     onFilterScreenClick: () -> Unit,
     modifier: Modifier = Modifier,
-    textAnimationModifier: @Composable (LaunchDetail) -> Modifier,
 ) {
     val scrollState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(scrollState)
@@ -169,7 +166,7 @@ private fun LaunchesScreenLayout(
                             key = items.itemKey { it.id }
                         ) { index ->
                             items[index]?.let {
-                                LaunchItem(it, navigateToDetail, textAnimationModifier)
+                                LaunchItem(it, navigateToDetail)
                             } ?: PlaceHolder()
                         }
 
@@ -244,7 +241,6 @@ private fun LaunchesScreenLayout(
 @Composable private fun LaunchItem(
     model: LaunchPreviewModel,
     navigateToDetail: (LaunchDetail) -> Unit,
-    textAnimationModifier: @Composable (LaunchDetail) -> Modifier
 ) {
     Column {
         ListItem(
@@ -414,7 +410,6 @@ private fun ScreenPreview() {
         onEraseQueryClick = {},
         onFilterScreenClick = {},
         Modifier,
-        { _ -> Modifier },
     )
 }
 
@@ -432,7 +427,6 @@ private fun ScreenPreview() {
                         state = LaunchPreviewModel.State.Launched(true)
                     ),
                     navigateToDetail = { },
-                    { Modifier },
                 )
                 HorizontalDivider()
                 LaunchItem(
@@ -444,7 +438,6 @@ private fun ScreenPreview() {
                         state = LaunchPreviewModel.State.Launched(false)
                     ),
                     navigateToDetail = { },
-                    { Modifier },
                 )
                 HorizontalDivider()
                 LaunchItem(
@@ -456,7 +449,6 @@ private fun ScreenPreview() {
                         state = LaunchPreviewModel.State.Upcoming
                     ),
                     navigateToDetail = { },
-                    { Modifier },
                 )
             }
         }
