@@ -284,7 +284,8 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
     CardLinkTemplate(article.url) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             if (article.imageUrl.isNotBlank()) {
-                Card { Image(rememberAsyncImagePainter(article.imageUrl), null, Modifier.sizeIn(maxWidth = 80.dp, maxHeight = 80.dp)) }
+                val imagePainter = rememberAsyncImagePainter(article.imageUrl)
+                Card { Image(imagePainter, null, Modifier.sizeIn(maxWidth = 80.dp, maxHeight = 80.dp)) }
                 Spacer(Modifier.width(16.dp))
             }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
