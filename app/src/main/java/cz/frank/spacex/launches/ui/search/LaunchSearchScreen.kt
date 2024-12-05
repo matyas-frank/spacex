@@ -38,6 +38,9 @@ import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.ui.detail.LaunchDetail
 import cz.frank.spacex.shared.ui.theme.SpaceXTheme
+import cz.frank.spacex.shared.ui.theme.attentionColor
+import cz.frank.spacex.shared.ui.theme.failureColor
+import cz.frank.spacex.shared.ui.theme.successColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -257,7 +260,15 @@ private fun LaunchesScreenLayout(
 }
 
 @Composable private fun LaunchItemIcon(state: LaunchPreviewModel.State) {
-    Card(shape = CircleShape) {
+    val color = when (state) {
+        LaunchPreviewModel.State.Upcoming -> attentionColor
+        is LaunchPreviewModel.State.Launched -> when (state.wasSuccessful) {
+            true -> successColor
+            false -> failureColor
+            null -> attentionColor
+        }
+    }
+    Card(shape = CircleShape, colors = CardDefaults.cardColors(containerColor = color)) {
         Box(Modifier.padding(8.dp)){
             val iconSize = 28.dp
             when (state) {
@@ -278,7 +289,7 @@ private fun LaunchesScreenLayout(
                             null,
                             Modifier.size(iconSize)
                         )
-                    }
+                    } ?: Icon(painterResource(R.drawable.ic_question_mark), null, Modifier.size(iconSize))
             }
         }
     }
