@@ -19,4 +19,10 @@
     <string name="launches_detail_date_format">HH:mm dd.MM.yyyy</string>
     <string name="launches_detail_link">Link</string>
 
+    <string name="crew_search_title">Crew</string>
+    <string name="crew_search_member_active">Active</string>
+    <string name="crew_search_member_not_active">Not active</string>
+    <string name="crew_search_member_retired">Retired</string>
+    <string name="crew_search_member_unknown">Unknown</string>
+
 </resources>

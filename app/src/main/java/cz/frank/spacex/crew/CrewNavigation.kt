@@ -13,10 +13,10 @@ object CrewNavigation {
     data object Search
 }
 
-fun NavGraphBuilder.crewNavigation(navHostController: NavHostController, toggleDrawer: () -> Unit) {
+fun NavGraphBuilder.crewNavigation(toggleDrawer: () -> Unit) {
     navigation<NavigationDrawerItem.Crew>(CrewNavigation.Search) {
         composable<CrewNavigation.Search> {
-            CrewSearchScreen(navHostController, toggleDrawer)
+            CrewSearchScreen(toggleDrawer)
         }
     }
 }
