@@ -3,6 +3,7 @@ package cz.frank.spacex.launches.ui.detail
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcelable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -265,30 +267,60 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
 @Composable private fun Article(article: String, metaData: Result<OpenGraphMetaData>?)  {
     metaData?.let {
         it.onSuccess {
-            CardLinkPreview(
-                it, CardLinkPreviewProperties.Builder(
-                    imagePainter = rememberAsyncImagePainter(it.imageUrl),
-                    drawWithCardOutline = true,
-                    maxNumberOfLinesForTitle = 3,
-                    maxNumberOfLinesForDescription = 4
-
-                ).build()
-            )
+            if (it.title.isBlank() && it.description.isNullOrBlank()) {
+                NotLoadedLinkMetaData(article)
+            } else {
+                CardLink(it)
+            }
         }.onFailure {
             NotLoadedLinkMetaData(article)
         }
     } ?: NotLoadedLinkMetaData(article)
+}
 
+@Composable private fun CardLink(article: OpenGraphMetaData) {
+    CardLinkTemplate(article.url) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            if (article.imageUrl.isNotBlank()) {
+                Card { Image(rememberAsyncImagePainter(article.imageUrl), null, Modifier.sizeIn(maxWidth = 80.dp, maxHeight = 80.dp)) }
+                Spacer(Modifier.width(16.dp))
+            }
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                article.title.let {
+                    if (it.isNotBlank()) {
+                        Text(it, style = MaterialTheme.typography.titleMedium, maxLines = 2)
+                    }
+                }
+                article.description?.let {
+                    if (it.isNotBlank()) {
+                        Text(it, style = MaterialTheme.typography.labelLarge, maxLines = 3, overflow = TextOverflow.Ellipsis)
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 @Composable private fun NotLoadedLinkMetaData(url: String?) {
+    CardLinkTemplate(url) {
+        Text(stringResource(R.string.launches_detail_link))
+    }
+}
+
+@Composable private fun CardLinkTemplate(url: String?, content: @Composable () -> Unit) {
     val context = LocalContext.current
     Card(onClick = {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         context.startActivity(browserIntent)
     }) {
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Text(stringResource(R.string.launches_detail_link), Modifier.padding(16.dp))
+        Box(
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            content()
         }
     }
 }
