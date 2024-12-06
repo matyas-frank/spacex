@@ -56,10 +56,7 @@ interface ILaunchesAPI {
         data class Launchpad(@SerialName("full_name") val name: String)
 
         @Serializable
-        data class Links(val patch: Patch, @SerialName("youtube_id") val youtubeId: String?, val article: String?) {
-            @Serializable
-            data class Patch(val small: String?)
-        }
+        data class Links(@SerialName("youtube_id") val youtubeId: String?, val article: String?)
 
         @Serializable
         data class Fairings(val recovered: Boolean?)
@@ -124,7 +121,6 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                         RequestOptions(
                             select = buildSelection {
                                 select("name")
-                                select("links.patch.small")
                                 select("links.article")
                                 select("success")
                                 select("upcoming")
