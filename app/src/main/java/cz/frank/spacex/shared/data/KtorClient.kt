@@ -4,6 +4,8 @@ import android.content.Context
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -18,7 +20,7 @@ import kotlinx.serialization.json.Json
 private const val HUNDRED_SECONDS = 100_000L
 
 @Suppress("FunctionNaming")
-fun HttpClient(host: String, engine: HttpClientEngine, logger: Logger) = HttpClient(engine) {
+fun HttpClient(host: String, engine: HttpClientEngine, logger: Logger, context: Context? = null) = HttpClient(engine) {
     expectSuccess = true
 
     install(HttpTimeout) {
@@ -29,6 +31,13 @@ fun HttpClient(host: String, engine: HttpClientEngine, logger: Logger) = HttpCli
         level = LogLevel.ALL
         this.logger = logger
     }
+
+    context?.let {
+        install(HttpCache) {
+            publicStorage(FileStorage(context.cacheDir))
+        }
+    }
+
 
     install(ContentNegotiation) {
         json(

@@ -12,10 +12,15 @@ import org.koin.dsl.module
 val spaceXModule = module {
     includes(launchesModule)
     includes(crewModule)
-    single { HttpClient("api.spacexdata.com", OkHttp.create(), object : Logger {
-        override fun log(message: String) {
-            Log.d("Ktor", message)
-        }
-    }) }
+    single {
+        HttpClient(
+            "api.spacexdata.com", OkHttp.create(), object : Logger {
+                override fun log(message: String) {
+                    Log.d("Ktor", message)
+                }
+            },
+            get()
+        )
+    }
     single { spaceXDatabaseConstruction(get()) }
 }
