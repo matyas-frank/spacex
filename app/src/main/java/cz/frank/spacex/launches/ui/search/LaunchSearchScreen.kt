@@ -47,7 +47,7 @@ import cz.frank.spacex.shared.ui.theme.failureColor
 import cz.frank.spacex.shared.ui.theme.successColor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.consumeAsFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable fun LaunchesSearchScreen(
@@ -65,14 +65,17 @@ import org.koin.compose.viewmodel.koinViewModel
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(vm.events) {
-        vm.events.receiveAsFlow().flowWithLifecycle(lifecycleOwner.lifecycle).collectLatest {
-            when (it) {
-                LaunchSearchViewModel.Event.RefreshRemoteItems -> {
-                    listState.animateScrollToItem(0)
-                    items.refresh()
+        vm.events
+            .consumeAsFlow()
+            .flowWithLifecycle(lifecycleOwner.lifecycle)
+            .collectLatest {
+                when (it) {
+                    LaunchSearchViewModel.Event.RefreshRemoteItems -> {
+                        listState.animateScrollToItem(0)
+                        items.refresh()
+                    }
                 }
             }
-        }
     }
 
     LaunchesScreenLayout(
