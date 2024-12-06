@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.launches.data.repository.LaunchesRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -29,23 +29,13 @@ class LaunchSearchViewModel(
         viewModelScope.launch { _query.value = filterRepository.query.first() }
     }
 
-    val pager = launchesRepository.pager.cachedIn(viewModelScope).distinctUntilChanged()
-
-    @OptIn(FlowPreview::class)
-    val filters= filterRepository.allFilters
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val pager = filterRepository
+        .allFilters
         .distinctUntilChanged()
         .debounce(400.milliseconds)
-        .distinctUntilChanged()
-        .onEach {
-            if (isFirstFilterCollect) {
-                isFirstFilterCollect = false
-            } else {
-                events.send(Event.RefreshRemoteItems)
-            }
-        }
-
-    val events = Channel<Event>()
-    private var isFirstFilterCollect = true
+        .flatMapLatest(launchesRepository::pager)
+        .cachedIn(viewModelScope)
 
     fun onQueryChange(query: String) {
         _query.value = query
@@ -59,9 +49,5 @@ class LaunchSearchViewModel(
 
     companion object {
         fun isQueryEmpty(query: String) = query.isBlank()
-    }
-
-    sealed interface Event {
-        data object RefreshRemoteItems : Event
     }
 }

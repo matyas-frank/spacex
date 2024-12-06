@@ -30,9 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -46,8 +44,6 @@ import cz.frank.spacex.shared.ui.theme.attentionColor
 import cz.frank.spacex.shared.ui.theme.failureColor
 import cz.frank.spacex.shared.ui.theme.successColor
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.consumeAsFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable fun LaunchesSearchScreen(
@@ -61,21 +57,11 @@ import org.koin.compose.viewmodel.koinViewModel
     val isAnyFilterActive by vm.isAnyFilterActive.collectAsStateWithLifecycle()
     val items = vm.pager.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
-    vm.filters.collectAsStateWithLifecycle(null)
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(vm.events) {
-        vm.events
-            .consumeAsFlow()
-            .flowWithLifecycle(lifecycleOwner.lifecycle)
-            .collectLatest {
-                when (it) {
-                    LaunchSearchViewModel.Event.RefreshRemoteItems -> {
-                        listState.animateScrollToItem(0)
-                        items.refresh()
-                    }
-                }
-            }
+    LaunchedEffect(items.loadState.refresh) {
+        if (items.loadState.refresh is LoadState.Loading) {
+            listState.animateScrollToItem(0)
+        }
     }
 
     LaunchesScreenLayout(

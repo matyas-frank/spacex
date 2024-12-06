@@ -19,10 +19,10 @@ class LaunchesRepository(
  ) : KoinComponent {
 
     @OptIn(ExperimentalPagingApi::class)
-    val pager = Pager(
+    fun pager(filters: ILaunchesFilterRepository.Filters) = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
         pagingSourceFactory = { launchDao.getAllLaunches() },
-        remoteMediator = inject<LaunchesMediator> { parametersOf(PAGE_SIZE) }.value
+        remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE) }.value
     ).flow.map { items ->
         items.map {
             LaunchPreviewModel(
