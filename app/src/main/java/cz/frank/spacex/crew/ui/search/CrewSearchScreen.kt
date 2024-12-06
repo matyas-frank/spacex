@@ -5,17 +5,22 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -24,6 +29,7 @@ import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.crew.domain.model.CrewMemberModel
@@ -61,21 +67,34 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun CrewSearchSuccessLayout(members: List<CrewMemberModel>, toggleDrawer: () -> Unit) {
+    val scrollState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(scrollState)
     Scaffold(
-        Modifier.fillMaxSize(),
-        topBar = { TopAppBar(
-            title = { Text(stringResource(R.string.crew_search_title)) },
-            navigationIcon = { IconButton(toggleDrawer) { Icon(Icons.Default.Menu, null) } }
-        ) }
+        Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.crew_search_title)) },
+                navigationIcon = { IconButton(toggleDrawer) { Icon(Icons.Default.Menu, null) } },
+                scrollBehavior = scrollBehavior
+            )
+        }
     ) {
         CrewMembers(members, Modifier.padding(it))
     }
 }
 
 @Composable private fun CrewMembers(members: List<CrewMemberModel>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier) {
-        items(members) {
-            CrewMember(it)
+    if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+        LazyColumn(modifier) {
+            items(members) {
+                CrewMember(it)
+            }
+        }
+    } else {
+        LazyVerticalGrid(GridCells.Fixed(2), modifier, horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+            items(members) {
+                CrewMember(it)
+            }
         }
     }
 }
@@ -103,7 +122,9 @@ import org.koin.androidx.compose.koinViewModel
                         painter,
                         null,
                         Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.FillWidth)
+                        contentScale = ContentScale.FillWidth
+
+                    )
                 }
             }
         }
