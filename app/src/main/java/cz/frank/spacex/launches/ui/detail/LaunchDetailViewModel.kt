@@ -40,8 +40,15 @@ class LaunchDetailViewModel(private val launchId: String) : ViewModel(), KoinCom
                 }
             }
         }
-
     }
+
+
+    private var playedTime = 0f
+    fun savedYoutubeVideoElapsedTime(playedTime: Float) {
+        this.playedTime = playedTime
+    }
+
+    fun getYoutubeVideoElapsedTime() = playedTime
 
     private suspend fun getLinkMetadata(link: String): Result<OpenGraphMetaData> {
         val openGraphMetaDataProvider = OpenGraphMetaDataProvider()

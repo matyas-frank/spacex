@@ -33,8 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
-import com.fresh.materiallinkpreview.ui.CardLinkPreview
-import com.fresh.materiallinkpreview.ui.CardLinkPreviewProperties
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -61,6 +59,8 @@ import kotlinx.parcelize.Parcelize
         item,
         article,
         vm::fetchLaunch,
+        vm::getYoutubeVideoElapsedTime,
+        vm::savedYoutubeVideoElapsedTime,
         modifier,
     )
 }
@@ -70,11 +70,13 @@ import kotlinx.parcelize.Parcelize
     model: Result<LaunchDetailModel>?,
     article: Result<OpenGraphMetaData>?,
     retry: () -> Unit,
+    getYoutubeVideoElapsedTime: () -> Float,
+    saveYoutubeVideoElapsedTime: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     model?.let { model ->
         model.onSuccess {
-            SuccessScreen(it, article, onBackClick, modifier)
+            SuccessScreen(it, article, onBackClick, getYoutubeVideoElapsedTime, saveYoutubeVideoElapsedTime, modifier)
         }.onFailure {
             FailureScreen(retry = retry)
         }
@@ -86,6 +88,8 @@ import kotlinx.parcelize.Parcelize
     model: LaunchDetailModel,
     articleMetaData: Result<OpenGraphMetaData>?,
     onBackClick: () -> Unit,
+    getYoutubeVideoElapsedTime: () -> Float,
+    saveYoutubeVideoElapsedTime: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -108,7 +112,7 @@ import kotlinx.parcelize.Parcelize
                 .verticalScroll(scroll)
         ) {
             model.youtubeId?.let {
-                YoutubePlayer(it)
+                YoutubePlayer(it, getYoutubeVideoElapsedTime, saveYoutubeVideoElapsedTime)
             }
             Column(
                 Modifier
@@ -147,7 +151,7 @@ import kotlinx.parcelize.Parcelize
     }
 }
 
-@Composable private fun YoutubePlayer(youtubeId: String) {
+@Composable private fun YoutubePlayer(youtubeId: String, getPlayedTime: () -> Float, savePlayedTime: (Float) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     AndroidView(factory = {
@@ -155,7 +159,12 @@ import kotlinx.parcelize.Parcelize
             lifecycleOwner.lifecycle.addObserver(this)
             addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
                 override fun onReady(youTubePlayer: YouTubePlayer) {
-                    youTubePlayer.cueVideo(youtubeId, 0f)
+                    youTubePlayer.cueVideo(youtubeId, getPlayedTime())
+                }
+
+                override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                    savePlayedTime(second)
+                    super.onCurrentSecond(youTubePlayer, second)
                 }
             })
         }
