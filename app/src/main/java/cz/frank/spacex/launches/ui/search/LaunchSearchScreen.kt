@@ -9,6 +9,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -58,19 +60,24 @@ import org.koin.compose.viewmodel.koinViewModel
     val query by vm.query.collectAsStateWithLifecycle()
     val isAnyFilterActive by vm.isAnyFilterActive.collectAsStateWithLifecycle()
     val items = vm.pager.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
     vm.filters.collectAsStateWithLifecycle(null)
 
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(vm.events) {
         vm.events.receiveAsFlow().flowWithLifecycle(lifecycleOwner.lifecycle).collectLatest {
             when (it) {
-                LaunchSearchViewModel.Event.RefreshRemoteItems -> items.refresh()
+                LaunchSearchViewModel.Event.RefreshRemoteItems -> {
+                    listState.animateScrollToItem(0)
+                    items.refresh()
+                }
             }
         }
     }
 
     LaunchesScreenLayout(
         items,
+        listState,
         query,
         isAnyFilterActive,
         vm::onQueryChange,
@@ -86,6 +93,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 @OptIn(ExperimentalMaterial3Api::class) private fun LaunchesScreenLayout(
     items: LazyPagingItems<LaunchPreviewModel>?,
+    listState: LazyListState,
     query: String,
     isAnyFilterActive: Boolean,
     onQueryChange: (String) -> Unit,
@@ -114,7 +122,7 @@ import org.koin.compose.viewmodel.koinViewModel
             )
         },
     ) { padding ->
-        SearchContent(padding, items, navigateToDetail)
+        SearchContent(padding, items, listState, navigateToDetail)
     }
 }
 
@@ -172,6 +180,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable private fun SearchContent(
     paddingValues: PaddingValues,
     items: LazyPagingItems<LaunchPreviewModel>?,
+    listState: LazyListState,
     navigateToDetail: (LaunchDetail) -> Unit
 ) {
     Surface(Modifier.padding(paddingValues)) {
@@ -202,7 +211,7 @@ import org.koin.compose.viewmodel.koinViewModel
                 },
             ) {
                 if (items.itemCount != 0) {
-                    Launches(items, navigateToDetail)
+                    Launches(items, listState, navigateToDetail)
                 } else {
                     when (items.loadState.refresh) {
                         is LoadState.Error -> FailureResult { items.refresh() }
@@ -243,9 +252,11 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalFoundationApi::class)
 private fun Launches(
     items: LazyPagingItems<LaunchPreviewModel>,
+    listState: LazyListState,
     navigateToDetail: (LaunchDetail) -> Unit
 ) {
     LazyColumn(
+        state = listState,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (items.loadState.refresh == LoadState.Loading) {
@@ -499,9 +510,11 @@ private fun ScreenPreview() {
         MutableStateFlow(pagingData)
     }
     val items = flow.collectAsLazyPagingItems()
+    val listState = rememberLazyListState()
 
     LaunchesScreenLayout(
         items,
+        listState,
         "Query",
         true,
         { _ -> },
