@@ -28,7 +28,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -42,6 +44,8 @@ import cz.frank.spacex.shared.ui.theme.attentionColor
 import cz.frank.spacex.shared.ui.theme.failureColor
 import cz.frank.spacex.shared.ui.theme.successColor
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable fun LaunchesSearchScreen(
@@ -53,7 +57,17 @@ import org.koin.compose.viewmodel.koinViewModel
 ) {
     val query by vm.query.collectAsStateWithLifecycle()
     val isAnyFilterActive by vm.isAnyFilterActive.collectAsStateWithLifecycle()
-    val items = vm.pager.collectAsStateWithLifecycle().value?.collectAsLazyPagingItems()
+    val items = vm.pager.collectAsLazyPagingItems()
+    vm.filters.collectAsStateWithLifecycle(null)
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(vm.events) {
+        vm.events.receiveAsFlow().flowWithLifecycle(lifecycleOwner.lifecycle).collectLatest {
+            when (it) {
+                LaunchSearchViewModel.Event.RefreshRemoteItems -> items.refresh()
+            }
+        }
+    }
 
     LaunchesScreenLayout(
         items,
@@ -70,8 +84,7 @@ import org.koin.compose.viewmodel.koinViewModel
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
-private fun LaunchesScreenLayout(
+@OptIn(ExperimentalMaterial3Api::class) private fun LaunchesScreenLayout(
     items: LazyPagingItems<LaunchPreviewModel>?,
     query: String,
     isAnyFilterActive: Boolean,
@@ -90,105 +103,182 @@ private fun LaunchesScreenLayout(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                title = {
-                    InputField(
-                        query = query,
-                        onQueryChange = onQueryChange,
-                        onSearch = { /* Not necessary because search is immediate after typing */ },
-                        expanded = true,
-                        onExpandedChange = { /* Search view is permanent */ },
-                        placeholder = { Text(stringResource(R.string.launch_search_input_field_placeholder)) },
-                        trailingIcon = {
-                            AnimatedVisibility(!isQueryEmpty(query), enter = fadeIn(), exit = fadeOut()) {
-                                IconButton(onClick = onEraseQueryClick) {
-                                    Icon(Icons.Default.Close, null)
-                                }
-                            }
-                        },
-                    )
-                }, navigationIcon = {
-                    IconButton(toggleDrawer) {
-                        Icon(Icons.Default.Menu, null)
-                    }
-                }, actions = {
-                    IconButton(onFilterScreenClick) {
-                        BadgedBox(
-                            badge = {
-                                if (isAnyFilterActive) { Badge() }
-                            }
-                        ) {
-                            Icon(painterResource(R.drawable.ic_filter_list), null, Modifier.padding(2.dp))
-                        }
-
-                    }
-                },
-                scrollBehavior = scrollBehavior
+                query,
+                onQueryChange,
+                isQueryEmpty,
+                onEraseQueryClick,
+                toggleDrawer,
+                onFilterScreenClick,
+                isAnyFilterActive,
+                scrollBehavior
             )
         },
-    ) {
-        Surface(Modifier.padding(it)) {
-            items?.let { items ->
-                var isIndicatorVisible by remember { mutableStateOf(false) }
-                val state = rememberPullToRefreshState()
-                LaunchedEffect(items.loadState.refresh) {
-                    if (items.loadState.refresh is LoadState.NotLoading) isIndicatorVisible = false
-                }
-                PullToRefreshBox(
-                    items.loadState.refresh is LoadState.Loading && isIndicatorVisible,
-                    onRefresh = {
-                        isIndicatorVisible = true
-                        items.refresh()
-                    },
-                    Modifier.fillMaxWidth(),
-                    state,
-                    indicator = {
-                        Indicator(
-                            state = state,
-                            modifier = Modifier.align(Alignment.TopCenter),
-                            isRefreshing = items.loadState.refresh is LoadState.Loading,
+    ) { padding ->
+        SearchContent(padding, items, navigateToDetail)
+    }
+}
 
-                        )
-                    },
-                ) {
-                    LazyColumn(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        if (items.loadState.refresh == LoadState.Loading) {
-                            stickyHeader {
-                                RefreshLoadingIndicator()
-                            }
-                        }
-                        if (items.loadState.refresh is LoadState.Error) {
-                            item {
-                                RefreshButton { items.refresh() }
-                            }
-                        }
-
-                        items(
-                            items.itemCount,
-                            key = items.itemKey { it.id }
-                        ) { index ->
-                            items[index]?.let {
-                                LaunchItem(it, navigateToDetail)
-                            } ?: PlaceHolder()
-                        }
-
-                        item {
-                            when {
-                                items.loadState.refresh is LoadState.Error -> {
-                                    RefreshButton { items.refresh() }
-                                }
-
-                                items.loadState.append is LoadState.Error -> {
-                                    RetryButton { items.retry() }
-                                }
-
-                                items.loadState.append == LoadState.Loading -> {
-                                    AppendLoadingIndicator()
-                                }
-                            }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun TopAppBar(
+    query: String,
+    onQueryChange: (String) -> Unit,
+    isQueryEmpty: (String) -> Boolean,
+    onEraseQueryClick: () -> Unit,
+    toggleDrawer: () -> Unit,
+    onFilterScreenClick: () -> Unit,
+    isAnyFilterActive: Boolean,
+    scrollBehavior: TopAppBarScrollBehavior
+) {
+    TopAppBar(
+        title = {
+            InputField(
+                query = query,
+                onQueryChange = onQueryChange,
+                onSearch = { /* Not necessary because search is immediate after typing */ },
+                expanded = true,
+                onExpandedChange = { /* Search view is permanent */ },
+                placeholder = { Text(stringResource(R.string.launch_search_input_field_placeholder)) },
+                trailingIcon = {
+                    AnimatedVisibility(!isQueryEmpty(query), enter = fadeIn(), exit = fadeOut()) {
+                        IconButton(onClick = onEraseQueryClick) {
+                            Icon(Icons.Default.Close, null)
                         }
                     }
+                },
+            )
+        }, navigationIcon = {
+            IconButton(toggleDrawer) {
+                Icon(Icons.Default.Menu, null)
+            }
+        }, actions = {
+            IconButton(onFilterScreenClick) {
+                BadgedBox(
+                    badge = {
+                        if (isAnyFilterActive) {
+                            Badge()
+                        }
+                    }
+                ) {
+                    Icon(painterResource(R.drawable.ic_filter_list), null, Modifier.padding(2.dp))
+                }
+
+            }
+        },
+        scrollBehavior = scrollBehavior
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun SearchContent(
+    paddingValues: PaddingValues,
+    items: LazyPagingItems<LaunchPreviewModel>?,
+    navigateToDetail: (LaunchDetail) -> Unit
+) {
+    Surface(Modifier.padding(paddingValues)) {
+        items?.let {
+            var isIndicatorVisible by remember { mutableStateOf(false) }
+            LaunchedEffect(items.loadState.refresh) {
+                items.let {
+                    if (items.loadState.refresh is LoadState.NotLoading) isIndicatorVisible = false
+                }
+            }
+
+            val state = rememberPullToRefreshState()
+            PullToRefreshBox(
+                items.loadState.refresh is LoadState.Loading && isIndicatorVisible,
+                onRefresh = {
+                    isIndicatorVisible = true
+                    items.refresh()
+                },
+                Modifier.fillMaxWidth(),
+                state,
+                indicator = {
+                    Indicator(
+                        state = state,
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        isRefreshing = items.loadState.refresh is LoadState.Loading,
+
+                        )
+                },
+            ) {
+                if (items.itemCount != 0) {
+                    Launches(items, navigateToDetail)
+                } else {
+                    when (items.loadState.refresh) {
+                        is LoadState.Error -> FailureResult { items.refresh() }
+                        is LoadState.NotLoading -> EmptyResult()
+                        else -> { RefreshLoadingIndicator() }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable private fun EmptyResult() {
+    ResultCard(R.string.launches_search_empty_results)
+}
+
+@Composable private fun FailureResult(onRefreshClick: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ResultCard(R.string.launches_search_failure_result)
+        RefreshButton(onRefreshClick)
+    }
+}
+
+@Composable private fun ResultCard(textRes: Int) {
+    Card(Modifier.padding(32.dp)) {
+        Column(
+            Modifier
+                .padding(32.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(stringResource(textRes))
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalFoundationApi::class)
+private fun Launches(
+    items: LazyPagingItems<LaunchPreviewModel>,
+    navigateToDetail: (LaunchDetail) -> Unit
+) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (items.loadState.refresh == LoadState.Loading) {
+            stickyHeader {
+                RefreshLoadingIndicator()
+            }
+        }
+        if (items.loadState.refresh is LoadState.Error) {
+            item {
+                RefreshButton { items.refresh() }
+            }
+        }
+        items(
+            items.itemCount,
+            key = items.itemKey { it.id }
+        ) { index ->
+            items[index]?.let {
+                LaunchItem(it, navigateToDetail)
+            } ?: PlaceHolder()
+        }
+
+        item {
+            when {
+                items.loadState.refresh is LoadState.Error -> {
+                    RefreshButton { items.refresh() }
+                }
+
+                items.loadState.append is LoadState.Error -> {
+                    RetryButton { items.retry() }
+                }
+
+                items.loadState.append == LoadState.Loading -> {
+                    AppendLoadingIndicator()
                 }
             }
         }

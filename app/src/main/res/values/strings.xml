@@ -25,4 +25,6 @@
     <string name="crew_search_member_retired">Retired</string>
     <string name="crew_search_member_unknown">Unknown</string>
 
+    <string name="launches_search_empty_results">For your filter configuration there are no results</string>
+    <string name="launches_search_failure_result">We are sorry but something went wrong</string>
 </resources>

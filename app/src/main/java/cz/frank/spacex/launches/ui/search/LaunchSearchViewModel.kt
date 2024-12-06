@@ -5,15 +5,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.launches.data.repository.LaunchesRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class LaunchSearchViewModel(
     private val filterRepository: ILaunchesFilterRepository,
-    private val launchesRepository: LaunchesRepository,
+    launchesRepository: LaunchesRepository,
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()
@@ -29,18 +29,23 @@ class LaunchSearchViewModel(
         viewModelScope.launch { _query.value = filterRepository.query.first() }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val pager = filterRepository
-        .allFilters
+    val pager = launchesRepository.pager.cachedIn(viewModelScope).distinctUntilChanged()
+
+    @OptIn(FlowPreview::class)
+    val filters= filterRepository.allFilters
         .distinctUntilChanged()
         .debounce(400.milliseconds)
-        .mapLatest { launchesRepository.pagedLaunches(it).cachedIn(viewModelScope) }
         .distinctUntilChanged()
-        .stateIn(
-            viewModelScope,
-            started = SharingStarted.Lazily,
-            null
-        )
+        .onEach {
+            if (isFirstFilterCollect) {
+                isFirstFilterCollect = false
+            } else {
+                events.send(Event.RefreshRemoteItems)
+            }
+        }
+
+    val events = Channel<Event>()
+    private var isFirstFilterCollect = true
 
     fun onQueryChange(query: String) {
         _query.value = query
@@ -54,5 +59,9 @@ class LaunchSearchViewModel(
 
     companion object {
         fun isQueryEmpty(query: String) = query.isBlank()
+    }
+
+    sealed interface Event {
+        data object RefreshRemoteItems : Event
     }
 }

@@ -23,8 +23,8 @@ val launchesModule = module {
     singleOf(::LaunchesRepository)
     singleOf(::LaunchesFilterRocketRepository) bind ILaunchesFilterRocketRepository::class
     singleOf(::LaunchesFilterRepository) bind ILaunchesFilterRepository::class
-    factory { (filters: ILaunchesFilterRepository.Filters, pageSize: Int) ->
-        LaunchesMediator(get(), get(), get(), get(), filters, get(), pageSize)
+    factory { (pageSize: Int) ->
+        LaunchesMediator(get(), get(), get(), get(), get(), pageSize)
     }
 
 

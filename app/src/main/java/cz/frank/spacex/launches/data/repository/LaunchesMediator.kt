@@ -22,7 +22,6 @@ class LaunchesMediator(
     private val launchDao: LaunchDao,
     private val networkService: ILaunchesAPI,
     private val remoteKeyDao: IRemoteKeyDao,
-    private val filters: ILaunchesFilterRepository.Filters,
     private val filtersRepository: ILaunchesFilterRepository,
     private val pageSize: Int,
 ) : RemoteMediator<Int, LaunchEntity>() {
@@ -54,7 +53,7 @@ class LaunchesMediator(
             }
         }
         val result = withContext(Dispatchers.IO) {
-            networkService.allLaunches(filters, page = loadKey, limit = pageSize)
+            networkService.allLaunches(filtersRepository.allFilters.first(), page = loadKey, limit = pageSize)
         }
         return result.fold(
             onSuccess = { response ->
