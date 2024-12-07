@@ -40,3 +40,11 @@ fun buildSelection(selection: SelectionBuilder.() -> Unit) = buildJsonObject {
 interface SelectionBuilder {
     fun select(property: String)
 }
+
+fun population(
+    attribute: String,
+    selection: SelectionBuilder.() -> Unit
+) = buildJsonObject {
+    put("path", attribute)
+    putSelection(selection)
+}

@@ -93,25 +93,6 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
             }.body()
         }
 
-    private fun ILaunchesFilterRepository.Filters.toJson() = buildJsonObject {
-        if (!(isUpcomingSelected && isLaunchedSelected)) {
-            put("upcoming", isUpcomingSelected)
-        }
-        if (rocketsCount.isNotEmpty()) {
-            put("rocket", buildJsonObject {
-                putJsonArray("\$in") {
-                    rocketsCount.forEach { this.add(it) }
-                }
-            })
-        }
-        if (query.isNotBlank()) {
-            put("name", buildJsonObject {
-                put("\$regex", query)
-                put("\$options", "i")
-            })
-        }
-    }
-
     override suspend fun specificLaunch(id: String) =
         runCatching<ILaunchesAPI.LaunchDetailResponse> {
             httpClient.post("$BASE_LAUNCHES_URL/query") {
@@ -146,15 +127,28 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
             }.body<PaginatedResponse<ILaunchesAPI.LaunchDetailResponse>>().docs.first()
         }
 
-    private fun population(
-        attribute: String,
-        selection: SelectionBuilder.() -> Unit
-    ) = buildJsonObject {
-        put("path", attribute)
-        putSelection(selection)
-    }
+
 
     companion object {
         private const val BASE_LAUNCHES_URL = "v5/launches"
+    }
+}
+
+private fun ILaunchesFilterRepository.Filters.toJson() = buildJsonObject {
+    if (!(isUpcomingSelected && isLaunchedSelected)) {
+        put("upcoming", isUpcomingSelected)
+    }
+    if (rocketsCount.isNotEmpty()) {
+        put("rocket", buildJsonObject {
+            putJsonArray("\$in") {
+                rocketsCount.forEach { this.add(it) }
+            }
+        })
+    }
+    if (query.isNotBlank()) {
+        put("name", buildJsonObject {
+            put("\$regex", query)
+            put("\$options", "i")
+        })
     }
 }
