@@ -31,17 +31,22 @@ class SpaceXApplication : Application(), SingletonImageLoader.Factory {
         return ImageLoader.Builder(this)
             .memoryCache {
                 MemoryCache.Builder()
-                    .maxSizePercent(context,0.20)
+                    .maxSizePercent(context, MEMORY_CACHE_MAX_SIZE_PERCENT)
                     .build()
             }
             .diskCache {
                 DiskCache.Builder()
                     .directory(cacheDir.resolve("image_cache"))
-                    .maxSizeBytes(5 * 1024 * 1024)
+                    .maxSizeBytes(DISK_CACHE_MAX_SIZE_BYTES)
                     .build()
             }
             .logger(DebugLogger())
             .crossfade(true)
             .build()
+    }
+
+    companion object {
+       private const val MEMORY_CACHE_MAX_SIZE_PERCENT = 0.2
+        private const val DISK_CACHE_MAX_SIZE_BYTES: Long = 5 * 1024 * 1024
     }
 }

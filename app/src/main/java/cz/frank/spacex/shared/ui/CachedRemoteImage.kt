@@ -10,21 +10,15 @@ import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 
-@Composable fun CachedRemoteImage(url: String?, contentDescription: String?, modifier: Modifier = Modifier, contentScale: ContentScale = ContentScale.Fit) {
-    val listener = object : ImageRequest.Listener {
-        override fun onError(request: ImageRequest, result: ErrorResult) {
-            super.onError(request, result)
-        }
-
-        override fun onSuccess(request: ImageRequest, result: SuccessResult) {
-            super.onSuccess(request, result)
-        }
-    }
-
+@Composable fun CachedRemoteImage(
+    url: String?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit
+) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
-            .listener(listener)
             .memoryCacheKey(url)
             .diskCacheKey(url)
             .diskCachePolicy(CachePolicy.ENABLED)
