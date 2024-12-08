@@ -74,8 +74,8 @@ class LaunchApiTest {
                     setOf(),
                     "",
                 ),
-            limit = 10,
-            page = 21
+            page = 21,
+            pageSize = 10,
         )
         assertTrue(response.isSuccess)
         response.getOrNull()?.let {
@@ -162,7 +162,7 @@ class LaunchApiTest {
                 false,
                 setOf(),
                 "",
-            ), limit = 10, page = 21
+            ), page = 21, pageSize = 10
         )
         assertTrue(response.isFailure)
         assert(response.check())

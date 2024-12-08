@@ -13,8 +13,8 @@ import kotlinx.serialization.json.*
 interface ILaunchesAPI {
     suspend fun allLaunches(
         query: ILaunchesFilterRepository.Filters,
-        limit: Int,
-        page: Int
+        page: Int,
+        pageSize: Int,
     ): Result<PaginatedResponse<LaunchPreviewResponse>>
     suspend fun specificLaunch(id: String): Result<LaunchDetailResponse>
 
@@ -64,7 +64,7 @@ interface ILaunchesAPI {
 }
 
 class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
-    override suspend fun allLaunches(query: ILaunchesFilterRepository.Filters, limit: Int, page: Int) =
+    override suspend fun allLaunches(query: ILaunchesFilterRepository.Filters, page: Int, pageSize: Int) =
         runCatching<PaginatedResponse<ILaunchesAPI.LaunchPreviewResponse>> {
             httpClient.post("$BASE_LAUNCHES_URL/query") {
                 setBody(
@@ -80,8 +80,8 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                             sort = buildJsonObject {
                                 put("date_unix", 1)
                             },
-                            limit = limit,
                             page = page,
+                            pageSize = pageSize,
                             populate = listOf(
                                 population("rocket") {
                                     select("name")
@@ -111,8 +111,8 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                                 select("details")
                                 select("fairings.recovered")
                             },
-                            limit = 1,
                             page = 1,
+                            pageSize = 1,
                             populate = listOf(
                                 population("rocket") {
                                     select("name")

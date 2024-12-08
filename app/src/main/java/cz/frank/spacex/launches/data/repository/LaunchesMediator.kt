@@ -6,8 +6,8 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
-import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.data.database.dao.IRemoteKeyDao
+import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.data.database.entity.LaunchEntity
 import cz.frank.spacex.main.data.SpaceXDatabase
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,7 @@ class LaunchesMediator(
             }
         }
         val result = withContext(Dispatchers.IO) {
-            networkService.allLaunches(filters, page = loadKey, limit = pageSize)
+            networkService.allLaunches(filters, page = loadKey, pageSize = pageSize)
         }
         return result.fold(
             onSuccess = { response ->
