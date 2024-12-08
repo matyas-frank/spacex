@@ -39,10 +39,10 @@ import androidx.paging.compose.itemKey
 import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.ui.detail.LaunchDetail
-import cz.frank.spacex.shared.ui.theme.SpaceXTheme
-import cz.frank.spacex.shared.ui.theme.attentionColor
-import cz.frank.spacex.shared.ui.theme.failureColor
-import cz.frank.spacex.shared.ui.theme.successColor
+import cz.frank.spacex.main.ui.theme.SpaceXTheme
+import cz.frank.spacex.main.ui.theme.attentionColor
+import cz.frank.spacex.main.ui.theme.failureColor
+import cz.frank.spacex.main.ui.theme.successColor
 import kotlinx.coroutines.flow.*
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -404,7 +404,8 @@ private fun Launches(
 @Composable private fun LaunchItemImage(url: String?) {
     val imagePainter = rememberAsyncImagePainter(
         url,
-        onState = {  }
+        onState = {  },
+
     )
     Card(
         Modifier.size(60.dp),

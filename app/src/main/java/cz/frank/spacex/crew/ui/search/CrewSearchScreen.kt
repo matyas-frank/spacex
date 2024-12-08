@@ -33,10 +33,10 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.crew.domain.model.CrewMemberModel
-import cz.frank.spacex.shared.ui.theme.SpaceXTheme
-import cz.frank.spacex.shared.ui.theme.attentionColor
-import cz.frank.spacex.shared.ui.theme.failureColor
-import cz.frank.spacex.shared.ui.theme.successColor
+import cz.frank.spacex.main.ui.theme.SpaceXTheme
+import cz.frank.spacex.main.ui.theme.attentionColor
+import cz.frank.spacex.main.ui.theme.failureColor
+import cz.frank.spacex.main.ui.theme.successColor
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun CrewSearchScreen(
