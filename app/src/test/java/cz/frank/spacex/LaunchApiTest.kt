@@ -66,7 +66,7 @@ class LaunchApiTest {
         }
         val api = launchesApi(engine)
         val response = api.allLaunches(
-            query =
+            filters =
                 ILaunchesFilterRepository.Filters(
                     false,
                     false,
@@ -192,7 +192,7 @@ class LaunchApiTest {
     private suspend fun failureRequestTest(code: HttpStatusCode, check: Result<*>.() -> Boolean) {
         val api = launchesApi(failureEngine(code))
         val response = api.allLaunches(
-            query = ILaunchesFilterRepository.Filters(
+            filters = ILaunchesFilterRepository.Filters(
                 false,
                 false,
                 setOf(),

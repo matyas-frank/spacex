@@ -12,7 +12,7 @@ import kotlinx.serialization.json.*
 
 interface ILaunchesAPI {
     suspend fun allLaunches(
-        query: ILaunchesFilterRepository.Filters,
+        filters: ILaunchesFilterRepository.Filters,
         page: Int,
         pageSize: Int,
     ): Result<PaginatedResponse<LaunchPreviewResponse>>
@@ -64,12 +64,12 @@ interface ILaunchesAPI {
 }
 
 class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
-    override suspend fun allLaunches(query: ILaunchesFilterRepository.Filters, page: Int, pageSize: Int) =
+    override suspend fun allLaunches(filters: ILaunchesFilterRepository.Filters, page: Int, pageSize: Int) =
         runCatching<PaginatedResponse<ILaunchesAPI.LaunchPreviewResponse>> {
             httpClient.post("$BASE_LAUNCHES_URL/query") {
                 setBody(
                     RequestBody(
-                        query.toJson(),
+                        filters.toJson(),
                         RequestOptions(
                             select = buildSelection {
                                 select("name")
@@ -138,10 +138,10 @@ private fun ILaunchesFilterRepository.Filters.toJson() = buildJsonObject {
     if (!(isUpcomingSelected && isLaunchedSelected)) {
         put("upcoming", isUpcomingSelected)
     }
-    if (rocketsCount.isNotEmpty()) {
+    if (rockets.isNotEmpty()) {
         put("rocket", buildJsonObject {
             putJsonArray("\$in") {
-                rocketsCount.forEach { this.add(it) }
+                rockets.forEach { this.add(it) }
             }
         })
     }

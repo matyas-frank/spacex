@@ -22,7 +22,7 @@ interface ILaunchesFilterRepository {
     data class Filters(
         val isUpcomingSelected: Boolean,
         val isLaunchedSelected: Boolean,
-        val rocketsCount: Set<String>,
+        val rockets: Set<String>,
         val query: String,
     )
 }
