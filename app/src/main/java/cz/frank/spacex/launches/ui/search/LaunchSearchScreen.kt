@@ -332,7 +332,8 @@ private fun Launches(
     Surface(
         Modifier
             .height(80.dp)
-            .fillMaxWidth()) {
+            .fillMaxWidth()
+    ) {
         Row(
             Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
