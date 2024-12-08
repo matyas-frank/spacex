@@ -35,7 +35,7 @@ import cz.frank.spacex.main.ui.theme.SpaceXTheme
 import cz.frank.spacex.main.ui.theme.attentionColor
 import cz.frank.spacex.main.ui.theme.failureColor
 import cz.frank.spacex.main.ui.theme.successColor
-import cz.frank.spacex.shared.ui.CachedRemoteImage
+import cz.frank.spacex.shared.ui.RefreshableCachedImage
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun CrewSearchScreen(
@@ -114,7 +114,7 @@ import org.koin.androidx.compose.koinViewModel
                 }
                 Spacer(Modifier.padding(8.dp))
                 Card(shape = RoundedCornerShape(22.dp)) {
-                    CachedRemoteImage(
+                    RefreshableCachedImage(
                         member.image,
                         null,
                         Modifier.fillMaxWidth(),
