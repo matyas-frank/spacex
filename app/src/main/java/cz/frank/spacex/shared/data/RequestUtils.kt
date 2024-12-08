@@ -19,9 +19,7 @@ data class RequestOptions(
 data class PaginatedResponse<T>(
     val docs: List<T>,
     val page: Int,
-    val hasPrevPage: Boolean,
     val hasNextPage: Boolean,
-    val prevPage: Int?,
     val nextPage: Int?
 )
 
