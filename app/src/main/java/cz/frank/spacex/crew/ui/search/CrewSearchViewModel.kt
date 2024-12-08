@@ -26,6 +26,7 @@ class CrewSearchViewModel(private val crewRepository: CrewRepository) : ViewMode
                 if (syncingJob == null) syncingJob = viewModelScope.launch {
                     _members.value = null
                     _members.value = crewRepository.fetchCrew()
+                    syncingJob = null
                 }
             }
         }

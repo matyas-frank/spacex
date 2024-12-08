@@ -32,10 +32,12 @@ class LaunchDetailViewModel(private val launchId: String) : ViewModel(), KoinCom
         viewModelScope.launch {
             syncMutex.withLock {
                 if (syncingJob == null) syncingJob = viewModelScope.launch {
-                    val res = repository.detailLaunch(launchId)
-                    _launch.value =  res
-                    res.onSuccess {
-                        it.article?.let { _article.value = getLinkMetadata(it) }
+                    _launch.value = null
+                    _launch.value = repository.detailLaunch(launchId).also { result ->
+                        result.onSuccess {
+                            it.article?.let { _article.value = getLinkMetadata(it) }
+                        }
+                        syncingJob = null
                     }
                 }
             }
