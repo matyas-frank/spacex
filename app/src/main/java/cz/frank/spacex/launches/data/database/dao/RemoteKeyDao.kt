@@ -13,7 +13,6 @@ interface IRemoteKeyDao {
     val nextPageToLoad: Flow<Int>
     val defaultPageToLoad: Int
     suspend fun updateNextPage(page: Int)
-
 }
 
 class RemoteKeyDao(private val context: Context) : IRemoteKeyDao {

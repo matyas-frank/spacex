@@ -1,6 +1,7 @@
 package cz.frank.spacex.launches.data.repository
 
 import cz.frank.spacex.launches.data.database.dao.ILaunchesFilterDao
+import cz.frank.spacex.launches.data.database.dao.IRefreshDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -12,13 +13,11 @@ interface ILaunchesFilterRepository {
     val isAnyFilterActive: Flow<Boolean>
     val query: Flow<String>
     val allFilters: Flow<Filters>
-    val timeOfLastRefreshInMillis: Flow<Long?>
 
 
     suspend fun toggleLaunchedSelected()
     suspend fun toggleUpcomingSelected()
     suspend fun setQuery(query: String)
-    suspend fun changeLastRefresh(millis: Long)
 
     data class Filters(
         val isUpcomingSelected: Boolean,
@@ -28,7 +27,10 @@ interface ILaunchesFilterRepository {
     )
 }
 
-class LaunchesFilterRepository(private val filterDao: ILaunchesFilterDao) : ILaunchesFilterRepository {
+class LaunchesFilterRepository(
+    private val filterDao: ILaunchesFilterDao,
+    private val refreshDao: IRefreshDao
+) : ILaunchesFilterRepository {
     override val isLaunchedSelected: Flow<Boolean> = filterDao.isLaunchedSelected
     override val isUpcomingSelected: Flow<Boolean> = filterDao.isUpcomingSelected
     override val query: Flow<String> = filterDao.query
@@ -40,7 +42,6 @@ class LaunchesFilterRepository(private val filterDao: ILaunchesFilterDao) : ILau
     ) { launched, upcoming, rockets ->
         !launched || !upcoming || rockets.isNotEmpty()
     }
-    override val timeOfLastRefreshInMillis: Flow<Long?> = filterDao.timeOfLastRefresh
 
 
     override suspend fun toggleLaunchedSelected() = updateTime { filterDao.toggleLaunchedSelected() }
@@ -56,11 +57,7 @@ class LaunchesFilterRepository(private val filterDao: ILaunchesFilterDao) : ILau
         ILaunchesFilterRepository.Filters(upcoming, launched, selectedRockets, query)
     }
     private suspend fun updateTime(block: suspend () -> Unit) {
-        filterDao.changeLastUpdated(null)
         block()
-    }
-
-    override suspend fun changeLastRefresh(millis: Long) {
-        filterDao.changeLastUpdated(millis)
+        refreshDao.mustBeRefresh()
     }
 }

@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
+import cz.frank.spacex.launches.data.database.dao.IRefreshDao
 import cz.frank.spacex.launches.data.database.dao.IRemoteKeyDao
 import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.data.database.entity.LaunchEntity
@@ -22,12 +23,12 @@ class LaunchesMediator(
     private val launchDao: LaunchDao,
     private val networkService: ILaunchesAPI,
     private val remoteKeyDao: IRemoteKeyDao,
-    private val filtersRepository: ILaunchesFilterRepository,
+    private val refreshDao: IRefreshDao,
     private val filters: ILaunchesFilterRepository.Filters,
     private val pageSize: Int,
 ) : RemoteMediator<Int, LaunchEntity>() {
     override suspend fun initialize(): InitializeAction {
-        val timeOfLastRefreshInMillis = filtersRepository.timeOfLastRefreshInMillis.first()
+        val timeOfLastRefreshInMillis = refreshDao.timeOfLastRefreshInMillis.first()
         return if (
             timeOfLastRefreshInMillis == null ||
             Clock.System.now().toEpochMilliseconds() >= timeOfLastRefreshInMillis + MAX_CACHED_TIME.inWholeMilliseconds
@@ -60,7 +61,7 @@ class LaunchesMediator(
             onSuccess = { response ->
                 database.withTransaction {
                     if (loadType == LoadType.REFRESH) {
-                        filtersRepository.changeLastRefresh(Clock.System.now().toEpochMilliseconds())
+                        refreshDao.changeTimeOfLastUpdate(Clock.System.now().toEpochMilliseconds())
                         launchDao.deleteAllLaunches()
                     }
                     response.nextPage?.let {

@@ -16,6 +16,7 @@ import org.koin.dsl.module
 val launchesModule = module {
     single { get<SpaceXDatabase>().launchesDao() }
     singleOf(::RemoteKeyDao) bind IRemoteKeyDao::class
+    singleOf(::RefreshDao) bind IRefreshDao::class
     singleOf(::LaunchesAPI) bind ILaunchesAPI::class
     singleOf(::LaunchesFilterDao) bind ILaunchesFilterDao::class
 
