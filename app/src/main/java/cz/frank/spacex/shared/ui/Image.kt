@@ -47,6 +47,8 @@ import kotlinx.coroutines.delay
     )
 }
 
+private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
+
 @Composable fun RefreshableCachedImage(
     url: String?,
     contentDescription: String?,
@@ -58,7 +60,7 @@ import kotlinx.coroutines.delay
 
     LaunchedEffect(isVisible) {
         if (!isVisible) {
-            delay(400)
+            delay(TIME_NEEDED_TO_REFRESH_IN_MILLIS)
             isVisible = true
         }
     }
@@ -94,6 +96,9 @@ import kotlinx.coroutines.delay
 }
 
 @Composable private fun Loading() {
-    Box(Modifier.padding(32.dp).fillMaxWidth(), contentAlignment = Alignment.Center) { CircularProgressIndicator(Modifier) }
+    Box(
+        Modifier.padding(32.dp).fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) { CircularProgressIndicator(Modifier) }
 }
 
