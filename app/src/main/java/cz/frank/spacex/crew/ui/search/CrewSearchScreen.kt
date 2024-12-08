@@ -2,7 +2,6 @@ package cz.frank.spacex.crew.ui.search
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -45,32 +44,22 @@ import org.koin.androidx.compose.koinViewModel
     vm: CrewSearchViewModel = koinViewModel()
 ) {
     val membersResult by vm.members.collectAsStateWithLifecycle()
-    CrewSearchScreenLayout(membersResult, vm::fetchCrew, toggleDrawer, modifier)
+    CrewSearchLayout(membersResult, vm::fetchCrew, toggleDrawer, modifier)
 }
 
-@Composable private fun CrewSearchScreenLayout(
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun CrewSearchLayout(
     membersResult: Result<List<CrewMemberModel>>?,
     retry: () -> Unit,
     toggleDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(modifier) {
-        membersResult?.let { model ->
-            model.onSuccess {
-                CrewSearchSuccessLayout(it, toggleDrawer)
-            }.onFailure {
-                FailureScreen(retry = retry)
-            }
-        } ?: LoadingScreen()
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable private fun CrewSearchSuccessLayout(members: List<CrewMemberModel>, toggleDrawer: () -> Unit) {
     val scrollState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(scrollState)
     Scaffold(
-        Modifier.fillMaxSize().nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.crew_search_title)) },
@@ -79,7 +68,15 @@ import org.koin.androidx.compose.koinViewModel
             )
         }
     ) {
-        CrewMembers(members, Modifier.padding(it))
+        Box(Modifier.padding(it)) {
+            membersResult?.let { model ->
+                model.onSuccess {
+                    CrewMembers(it)
+                }.onFailure {
+                    FailureScreen(retry = retry)
+                }
+            } ?: LoadingScreen()
+        }
     }
 }
 
@@ -181,7 +178,7 @@ val CrewMemberModel.Status.text get() = when (this) {
 @Composable
 private fun Prev() {
     SpaceXTheme {
-        CrewSearchSuccessLayout(listOf(
+        CrewSearchLayout(Result.success(listOf(
             CrewMemberModel(
                 "Robert Behnken",
                 CrewMemberModel.Status.ACTIVE,
@@ -207,6 +204,6 @@ private fun Prev() {
                 "https://en.wikipedia.org/wiki/Soichi_Noguchi"
             )
 
-        ), {})
+        )), {}, {})
     }
 }
