@@ -106,13 +106,13 @@ import org.koin.androidx.compose.koinViewModel
             },
             Modifier.padding(vertical = 16.dp)
         ) {
-            Column(Modifier.padding(16.dp)) {
+            Column(Modifier.padding(16.dp).fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(member.name, style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.width(16.dp))
                     ActiveIndicator(member.status)
                 }
-                Spacer(Modifier.padding(8.dp))
+                Spacer(Modifier.height(8.dp))
                 Card(shape = RoundedCornerShape(22.dp)) {
                     RefreshableCachedImage(
                         member.image,
