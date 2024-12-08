@@ -55,24 +55,6 @@ import org.koin.compose.viewmodel.koinViewModel
     val items = vm.pager.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
 
-    LaunchedEffect(items) {
-        var loadingTriggered = false
-        snapshotFlow { items.loadState.refresh }.collect {
-            when (it) {
-                is LoadState.Loading -> {
-                    loadingTriggered = true
-                }
-                is LoadState.NotLoading -> {
-                    if (loadingTriggered) {
-                        listState.animateScrollToItem(0)
-                        loadingTriggered = false
-                    }
-                }
-                is LoadState.Error -> {}
-            }
-        }
-    }
-
     LaunchesScreenLayout(
         items,
         listState,
@@ -90,7 +72,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class) private fun LaunchesScreenLayout(
-    items: LazyPagingItems<LaunchPreviewModel>?,
+    items: LazyPagingItems<LaunchPreviewModel>,
     listState: LazyListState,
     query: String,
     isAnyFilterActive: Boolean,
@@ -104,6 +86,24 @@ import org.koin.compose.viewmodel.koinViewModel
 ) {
     val scrollState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(scrollState)
+
+    LaunchedEffect(items) {
+        var loadingTriggered = false
+        snapshotFlow { items.loadState.refresh }.collect {
+            when (it) {
+                is LoadState.Loading -> {
+                    loadingTriggered = true
+                }
+                is LoadState.NotLoading -> {
+                    if (loadingTriggered) {
+                        listState.animateScrollToItem(0)
+                        loadingTriggered = false
+                    }
+                }
+                is LoadState.Error -> {}
+            }
+        }
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
