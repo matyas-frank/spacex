@@ -30,13 +30,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowWidthSizeClass
-import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.crew.domain.model.CrewMemberModel
 import cz.frank.spacex.main.ui.theme.SpaceXTheme
 import cz.frank.spacex.main.ui.theme.attentionColor
 import cz.frank.spacex.main.ui.theme.failureColor
 import cz.frank.spacex.main.ui.theme.successColor
+import cz.frank.spacex.shared.ui.CachedRemoteImage
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun CrewSearchScreen(
@@ -116,10 +116,9 @@ import org.koin.androidx.compose.koinViewModel
                     ActiveIndicator(member.status)
                 }
                 Spacer(Modifier.padding(8.dp))
-                val painter = rememberAsyncImagePainter(member.image)
                 Card(shape = RoundedCornerShape(22.dp)) {
-                    Image(
-                        painter,
+                    CachedRemoteImage(
+                        member.image,
                         null,
                         Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth

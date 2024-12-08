@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,14 +35,14 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import coil3.compose.rememberAsyncImagePainter
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.ui.detail.LaunchDetail
 import cz.frank.spacex.main.ui.theme.SpaceXTheme
 import cz.frank.spacex.main.ui.theme.attentionColor
 import cz.frank.spacex.main.ui.theme.failureColor
 import cz.frank.spacex.main.ui.theme.successColor
-import kotlinx.coroutines.flow.*
+import cz.frank.spacex.shared.ui.CachedRemoteImage
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable fun LaunchesSearchScreen(
@@ -402,18 +401,13 @@ private fun Launches(
 }
 
 @Composable private fun LaunchItemImage(url: String?) {
-    val imagePainter = rememberAsyncImagePainter(
-        url,
-        onState = {  },
-
-    )
     Card(
         Modifier.size(60.dp),
         shape = CircleShape,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
     ) {
-        Image(
-            painter = imagePainter,
+        CachedRemoteImage(
+            url,
             contentDescription = "",
             Modifier.padding(6.dp)
         )
