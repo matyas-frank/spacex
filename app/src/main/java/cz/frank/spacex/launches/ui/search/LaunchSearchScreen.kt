@@ -1,8 +1,6 @@
 package cz.frank.spacex.launches.ui.search
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -263,15 +261,19 @@ private fun Launches(
         state = listState,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (items.loadState.refresh == LoadState.Loading) {
-            stickyHeader {
-                RefreshLoadingIndicator()
-            }
+        stickyHeader {
+            AnimatedVisibility(
+                items.loadState.refresh == LoadState.Loading,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) { RefreshLoadingIndicator() }
         }
-        if (items.loadState.refresh is LoadState.Error) {
-            item {
-                RefreshButton { items.refresh() }
-            }
+        item {
+            AnimatedVisibility(
+                items.loadState.refresh is LoadState.Error,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) { RefreshButton { items.refresh() } }
         }
         items(
             items.itemCount,
