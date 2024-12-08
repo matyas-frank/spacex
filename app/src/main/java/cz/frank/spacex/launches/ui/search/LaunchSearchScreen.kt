@@ -43,7 +43,7 @@ import cz.frank.spacex.shared.ui.theme.SpaceXTheme
 import cz.frank.spacex.shared.ui.theme.attentionColor
 import cz.frank.spacex.shared.ui.theme.failureColor
 import cz.frank.spacex.shared.ui.theme.successColor
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable fun LaunchesSearchScreen(
@@ -58,9 +58,21 @@ import org.koin.compose.viewmodel.koinViewModel
     val items = vm.pager.collectAsLazyPagingItems()
     val listState = rememberLazyListState()
 
-    LaunchedEffect(items.loadState.refresh) {
-        if (items.loadState.refresh is LoadState.Loading) {
-            listState.animateScrollToItem(0)
+    LaunchedEffect(items) {
+        var loadingTriggered = false
+        snapshotFlow { items.loadState.refresh }.collect {
+            when (it) {
+                is LoadState.Loading -> {
+                    loadingTriggered = true
+                }
+                is LoadState.NotLoading -> {
+                    if (loadingTriggered) {
+                        listState.animateScrollToItem(0)
+                        loadingTriggered = false
+                    }
+                }
+                is LoadState.Error -> {}
+            }
         }
     }
 
@@ -202,10 +214,14 @@ import org.koin.compose.viewmodel.koinViewModel
                 if (items.itemCount != 0) {
                     Launches(items, listState, navigateToDetail)
                 } else {
-                    when (items.loadState.refresh) {
-                        is LoadState.Error -> FailureResult { items.refresh() }
-                        is LoadState.NotLoading -> EmptyResult()
-                        else -> { RefreshLoadingIndicator() }
+                    if (items.loadState.isIdle) {
+                        if (items.loadState.hasError) {
+                            FailureResult { items.refresh() }
+                        } else {
+                            EmptyResult()
+                        }
+                    } else {
+                        RefreshLoadingIndicator()
                     }
                 }
             }
