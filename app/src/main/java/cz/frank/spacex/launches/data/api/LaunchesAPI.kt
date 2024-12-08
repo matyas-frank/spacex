@@ -81,7 +81,7 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                                 put("date_unix", 1)
                             },
                             page = page,
-                            pageSize = pageSize,
+                            limit = pageSize,
                             populate = listOf(
                                 population("rocket") {
                                     select("name")
@@ -112,7 +112,7 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                                 select("fairings.recovered")
                             },
                             page = 1,
-                            pageSize = 1,
+                            limit = 1,
                             populate = listOf(
                                 population("rocket") {
                                     select("name")
