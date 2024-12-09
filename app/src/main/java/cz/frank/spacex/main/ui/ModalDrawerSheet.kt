@@ -26,7 +26,7 @@ import cz.frank.spacex.R
 }
 
 @Composable private fun Header() {
-    Text("SPACEX", modifier = Modifier.padding(16.dp))
+    Text(stringResource(R.string.app_name), modifier = Modifier.padding(16.dp))
 }
 
 @Composable private fun DrawerItems(
