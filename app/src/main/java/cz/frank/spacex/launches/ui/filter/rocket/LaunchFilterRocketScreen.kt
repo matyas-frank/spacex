@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.data.repository.RocketFilterModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun LaunchFilterRocketScreen(
@@ -89,7 +90,7 @@ private fun Preview() {
             RocketFilterModel("3", "Falcon 3", false),
             RocketFilterModel("4", "Falcon 4", false),
             RocketFilterModel("5", "Falcon 5", true),
-        ),
+        ).toPersistentList(),
         onCheckedAll = {},
         onCheckedChange = {},
         onBackClick = {},
