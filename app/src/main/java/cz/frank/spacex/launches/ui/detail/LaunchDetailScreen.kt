@@ -180,7 +180,7 @@ import kotlinx.parcelize.Parcelize
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val iconSize = 28.dp
+        val iconSize = 20.dp
         TextWithSuccessIcon(
             if (model.state is LaunchDetailModel.State.Upcoming)
                 R.string.launches_detail_upcoming
