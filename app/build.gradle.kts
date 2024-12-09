@@ -76,6 +76,7 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.paging)
+    testImplementation(libs.androidx.paging.test)
 
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.core)

@@ -3,6 +3,7 @@ package cz.frank.spacex.launches.data.repository
 import androidx.paging.*
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
 import cz.frank.spacex.launches.data.database.dao.LaunchDao
+import cz.frank.spacex.launches.data.database.entity.LaunchEntity
 import cz.frank.spacex.launches.ui.detail.LaunchDetailModel
 import cz.frank.spacex.launches.ui.search.LaunchPreviewModel
 import kotlinx.coroutines.flow.Flow
@@ -26,20 +27,20 @@ class LaunchesRepository(
         pagingSourceFactory = { launchDao.getAllLaunches() },
         remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE) }.value
     ).flow.map { items ->
-        items.map {
-            LaunchPreviewModel(
-                it.id,
-                it.name,
-                it.image,
-                it.rocket,
-                if (it.upcoming) LaunchPreviewModel.State.Upcoming
-                else LaunchPreviewModel.State.Launched(it.success)
-            )
-        }
+        items.map { it.toModel() }
     }
 
     override suspend fun detailLaunch(id: String) = launchAPI.specificLaunch(id).mapCatching { it.toModel() }
 }
+
+fun LaunchEntity.toModel() = LaunchPreviewModel(
+    id,
+    name,
+    image,
+    rocket,
+    if (upcoming) LaunchPreviewModel.State.Upcoming
+    else LaunchPreviewModel.State.Launched(success)
+)
 
 fun ILaunchesAPI.LaunchDetailResponse.toModel() = LaunchDetailModel(
     id,
