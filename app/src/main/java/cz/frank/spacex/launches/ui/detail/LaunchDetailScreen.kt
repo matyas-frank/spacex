@@ -97,10 +97,10 @@ import kotlinx.parcelize.Parcelize
         modifier,
         topBar = {
             TopAppBar(
-                title = { Text("${model.flightNumber}.${model.name}") },
+                title = { Text(stringResource(R.string.launches_detail_title,model.flightNumber,model.name)) },
                 navigationIcon = {
                     IconButton({ onBackClick() }) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, stringResource(R.string.navigate_back_description))
                     }
                 }
             )
@@ -237,7 +237,7 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
                 val extraPadding = 2.dp
                 Icon(
                     painterResource(R.drawable.ic_event_upcoming),
-                    null,
+                    stringResource(R.string.launch_state_upcoming_launch_description),
                     Modifier
                         .padding(extraPadding)
                         .size(iconSize - extraPadding)
@@ -249,10 +249,17 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
                 state.wasSuccessful?.let {
                     Icon(
                         if (state.wasSuccessful) Icons.Default.Check else Icons.Default.Close,
-                        null,
+                        stringResource(
+                            if (state.wasSuccessful) R.string.launch_state_successfully_launched_description
+                            else R.string.launch_state_unsuccessful_launch_description
+                        ),
                         modifier
                     )
-                } ?: Icon(painterResource(R.drawable.ic_question_mark), null, modifier)
+                } ?: Icon(
+                    painterResource(R.drawable.ic_question_mark),
+                    stringResource(R.string.launch_state_unknown_state_launch_description),
+                    modifier
+                )
             }
         }
     }
@@ -270,7 +277,10 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
     IconCardHolder(if (recovered) successColor else failureColor) {
         Icon(
             if (recovered) Icons.Default.Check else Icons.Default.Close,
-            null,
+            stringResource(
+                if (recovered) R.string.fairing_successfully_recovered_description
+                else R.string.fairing_unsuccessfully_recovered_description
+            ),
             Modifier.size(size)
         )
     }

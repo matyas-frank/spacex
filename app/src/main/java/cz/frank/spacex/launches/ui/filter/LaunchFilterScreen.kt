@@ -56,7 +56,7 @@ private fun LaunchesFilterScreenLayout(
                 title = { Text(stringResource(R.string.launches_filter_title)) },
                 navigationIcon = {
                     IconButton(onBackClick) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, null)
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, stringResource(R.string.navigate_back_description))
                     }
                 }
             )
@@ -123,7 +123,10 @@ data class Chip(val isSelected: Boolean, val onClick: () -> Unit)
                 Text(selectedRockets.toString())
             }
         }
-        Icon(Icons.AutoMirrored.Default.KeyboardArrowRight, null)
+        Icon(
+            Icons.AutoMirrored.Default.KeyboardArrowRight,
+            stringResource(R.string.navigate_to_rockets_filtering_description)
+        )
     }
 }
 

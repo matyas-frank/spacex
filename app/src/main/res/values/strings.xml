@@ -2,22 +2,30 @@
     <string name="app_name">SpaceX</string>
     <string name="drawer_launches">Launches</string>
     <string name="drawer_crew">Crew</string>
+    <string name="toggle_drawer_icon_description">Toggle drawer</string>
+    <string name="navigate_back_description">Navigate back</string>
 
     <string name="launch_search">Launches</string>
     <string name="launch_search_input_field_placeholder">Search for launches</string>
     <string name="launch_search_refresh_button">Refresh</string>
     <string name="launch_search_retry_button">Retry</string>
+    <string name="navigate_to_filtering_description">Navigate filtering</string>
+    <string name="erase_search_query_description">Erase search query</string>
 
     <string name="launches_filter_title">Filters</string>
     <string name="launches_filter_chip_launched">Launched</string>
     <string name="launches_filter_chip_upcoming">Upcoming</string>
     <string name="launches_filter_rockets">Rockets</string>
+    <string name="navigate_to_rockets_filtering_description">Navigate to rockets filtering</string>
 
+    <string name="launches_detail_title">%1$s.%2$s</string>
     <string name="launches_detail_fairings_recovered">Fairings recovered</string>
     <string name="launches_detail_launched">Launched</string>
     <string name="launches_detail_upcoming">Upcoming</string>
     <string name="launches_detail_date_format">HH:mm dd.MM.yyyy</string>
     <string name="launches_detail_link">Link</string>
+    <string name="fairing_successfully_recovered_description">Fairings were recovered</string>
+    <string name="fairing_unsuccessfully_recovered_description">Fairings were not recovered</string>
 
     <string name="crew_search_title">Crew</string>
     <string name="crew_search_member_active">Active</string>
@@ -27,4 +35,9 @@
 
     <string name="launches_search_empty_results">For your filter configuration there are no results</string>
     <string name="launches_search_failure_result">We are sorry but something went wrong</string>
+
+    <string name="launch_state_successfully_launched_description">Launch was successful</string>
+    <string name="launch_state_unsuccessful_launch_description">Launch was failure</string>
+    <string name="launch_state_upcoming_launch_description">launch is upcoming</string>
+    <string name="launch_state_unknown_state_launch_description">launch has unknown state</string>
 </resources>

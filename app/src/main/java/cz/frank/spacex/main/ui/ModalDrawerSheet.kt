@@ -45,12 +45,13 @@ import cz.frank.spacex.R
     isSelected: Boolean,
     onItemClick: (NavigationDrawerItem) -> Unit
 ) {
+    val label = stringResource(item.name)
     NavigationDrawerItem(
-        label = { Text(stringResource(item.name)) },
+        label = { Text(label) },
         selected = isSelected,
         onClick = { onItemClick(item.destination) },
         modifier = Modifier.padding(horizontal = 16.dp),
-        icon = { Icon(painterResource(item.icon), null) }
+        icon = { Icon(painterResource(item.icon), contentDescription = null) }
     )
 }
 

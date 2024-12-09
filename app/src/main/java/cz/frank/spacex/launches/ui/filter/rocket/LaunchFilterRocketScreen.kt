@@ -54,7 +54,14 @@ private fun LaunchFilterRocketsLayout(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.launches_filter_rockets)) },
-                navigationIcon = { IconButton(onBackClick) { Icon(Icons.AutoMirrored.Default.ArrowBack, null) }},
+                navigationIcon = {
+                    IconButton(onBackClick) {
+                        Icon(
+                            Icons.AutoMirrored.Default.ArrowBack,
+                            stringResource(R.string.navigate_back_description)
+                        )
+                    }
+                },
                 actions = { Checkbox(rockets.all { it.isSelected }, { onCheckedAll() }) }
             )
         },

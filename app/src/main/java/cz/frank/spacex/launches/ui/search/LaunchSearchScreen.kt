@@ -148,14 +148,14 @@ import org.koin.compose.viewmodel.koinViewModel
                 trailingIcon = {
                     AnimatedVisibility(!isQueryEmpty(query), enter = fadeIn(), exit = fadeOut()) {
                         IconButton(onClick = onEraseQueryClick) {
-                            Icon(Icons.Default.Close, null)
+                            Icon(Icons.Default.Close, stringResource(R.string.erase_search_query_description))
                         }
                     }
                 },
             )
         }, navigationIcon = {
             IconButton(toggleDrawer) {
-                Icon(Icons.Default.Menu, null)
+                Icon(Icons.Default.Menu, stringResource(R.string.toggle_drawer_icon_description))
             }
         }, actions = {
             IconButton(onFilterScreenClick) {
@@ -166,7 +166,11 @@ import org.koin.compose.viewmodel.koinViewModel
                         }
                     }
                 ) {
-                    Icon(painterResource(R.drawable.ic_filter_list), null, Modifier.padding(2.dp))
+                    Icon(
+                        painterResource(R.drawable.ic_filter_list),
+                        stringResource(R.string.navigate_to_filtering_description),
+                        Modifier.padding(2.dp)
+                    )
                 }
 
             }
@@ -385,7 +389,7 @@ private fun Launches(
                     val extraPadding = 2.dp
                     Icon(
                         painterResource(R.drawable.ic_event_upcoming),
-                        null,
+                        stringResource(R.string.launch_state_upcoming_launch_description),
                         Modifier
                             .padding(extraPadding)
                             .size(iconSize - extraPadding)
@@ -395,10 +399,17 @@ private fun Launches(
                     state.wasSuccessful?.let {
                         Icon(
                             if (state.wasSuccessful) Icons.Default.Check else Icons.Default.Close,
-                            null,
+                            stringResource(
+                                if (state.wasSuccessful) R.string.launch_state_successfully_launched_description
+                                else R.string.launch_state_unsuccessful_launch_description
+                            ),
                             Modifier.size(iconSize)
                         )
-                    } ?: Icon(painterResource(R.drawable.ic_question_mark), null, Modifier.size(iconSize))
+                    } ?: Icon(
+                        painterResource(R.drawable.ic_question_mark),
+                        stringResource(R.string.launch_state_unknown_state_launch_description),
+                        Modifier.size(iconSize)
+                    )
             }
         }
     }

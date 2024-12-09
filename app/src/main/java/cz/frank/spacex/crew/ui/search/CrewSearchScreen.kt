@@ -65,7 +65,14 @@ import org.koin.androidx.compose.koinViewModel
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.crew_search_title)) },
-                navigationIcon = { IconButton(toggleDrawer) { Icon(Icons.Default.Menu, null) } },
+                navigationIcon = {
+                    IconButton(toggleDrawer) {
+                        Icon(
+                            Icons.Default.Menu,
+                            stringResource(R.string.toggle_drawer_icon_description)
+                        )
+                    }
+                },
                 scrollBehavior = scrollBehavior
             )
         }
@@ -108,7 +115,10 @@ import org.koin.androidx.compose.koinViewModel
             },
             Modifier.padding(vertical = 16.dp)
         ) {
-            Column(Modifier.padding(16.dp).fillMaxWidth()) {
+            Column(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(member.name, style = MaterialTheme.typography.titleLarge)
                     Spacer(Modifier.width(16.dp))
@@ -118,7 +128,7 @@ import org.koin.androidx.compose.koinViewModel
                 Card(shape = RoundedCornerShape(22.dp)) {
                     RefreshableCachedImage(
                         member.image,
-                        null,
+                        contentDescription = null,
                         Modifier.fillMaxWidth(),
                         contentScale = ContentScale.FillWidth
 
