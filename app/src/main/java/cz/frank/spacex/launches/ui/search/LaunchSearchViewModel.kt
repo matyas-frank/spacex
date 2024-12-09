@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
-import cz.frank.spacex.launches.data.repository.LaunchesRepository
+import cz.frank.spacex.launches.data.repository.ILaunchesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class LaunchSearchViewModel(
     private val filterRepository: ILaunchesFilterRepository,
-    launchesRepository: LaunchesRepository,
+    launchesRepository: ILaunchesRepository,
 ) : ViewModel() {
     private val _query = MutableStateFlow("")
     val query = _query.asStateFlow()

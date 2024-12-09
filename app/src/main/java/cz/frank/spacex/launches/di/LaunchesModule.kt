@@ -21,7 +21,7 @@ val launchesModule = module {
     singleOf(::LaunchesFilterDao) bind ILaunchesFilterDao::class
 
 
-    singleOf(::LaunchesRepository)
+    singleOf(::LaunchesRepository) bind ILaunchesRepository::class
     singleOf(::LaunchesFilterRocketRepository) bind ILaunchesFilterRocketRepository::class
     singleOf(::LaunchesFilterRepository) bind ILaunchesFilterRepository::class
     factory { (filters: ILaunchesFilterRepository.Filters, pageSize: Int) ->

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.parsing.OpenGraphMetaDataProvider
-import cz.frank.spacex.launches.data.repository.LaunchesRepository
+import cz.frank.spacex.launches.data.repository.ILaunchesRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import org.koin.core.component.inject
 import java.net.URL
 
 class LaunchDetailViewModel(private val launchId: String) : ViewModel(), KoinComponent {
-    private val repository: LaunchesRepository by inject()
+    private val repository: ILaunchesRepository by inject()
     private val _launch = MutableStateFlow<Result<LaunchDetailModel>?>(null)
     val launch = _launch.asStateFlow()
 

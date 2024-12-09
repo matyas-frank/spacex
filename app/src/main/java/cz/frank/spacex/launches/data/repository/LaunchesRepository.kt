@@ -1,25 +1,27 @@
 package cz.frank.spacex.launches.data.repository
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.map
+import androidx.paging.*
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
 import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.ui.detail.LaunchDetailModel
 import cz.frank.spacex.launches.ui.search.LaunchPreviewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
+interface ILaunchesRepository {
+    fun pager(filters: ILaunchesFilterRepository.Filters): Flow<PagingData<LaunchPreviewModel>>
+    suspend fun detailLaunch(id: String): Result<LaunchDetailModel>
+}
+
 class LaunchesRepository(
     private val launchDao: LaunchDao,
     private val launchAPI: ILaunchesAPI,
- ) : KoinComponent {
-
+ ) : KoinComponent, ILaunchesRepository {
     @OptIn(ExperimentalPagingApi::class)
-    fun pager(filters: ILaunchesFilterRepository.Filters) = Pager(
+    override fun pager(filters: ILaunchesFilterRepository.Filters) = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
         pagingSourceFactory = { launchDao.getAllLaunches() },
         remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE) }.value
@@ -36,7 +38,7 @@ class LaunchesRepository(
         }
     }
 
-    suspend fun detailLaunch(id: String) = launchAPI.specificLaunch(id).mapCatching { it.toModel() }
+    override suspend fun detailLaunch(id: String) = launchAPI.specificLaunch(id).mapCatching { it.toModel() }
 }
 
 fun ILaunchesAPI.LaunchDetailResponse.toModel() = LaunchDetailModel(
