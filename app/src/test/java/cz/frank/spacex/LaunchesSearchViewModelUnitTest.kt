@@ -96,7 +96,9 @@ class LaunchesSearchViewModelTest {
         val items = vm.pager
         val rocketIds = setOf(RocketsDataSource.rockets.first().id)
         filterRepo.changeRockets(rocketIds)
-        val filterRocketNames = rocketIds.map { filterRocketId -> RocketsDataSource.rockets.find { it.id == filterRocketId }!! }.map { it.name }.toSet()
+        val filterRocketNames = rocketIds.map { filterRocketId ->
+            RocketsDataSource.rockets.find { it.id == filterRocketId }!!
+        }.map { it.name }.toSet()
         val snapshot = items.asSnapshot {
             scrollTo(100)
         }
@@ -137,7 +139,9 @@ class LaunchesSearchViewModelTest {
         filterRepo.setQuery(query)
         val rocketIds = setOf(RocketsDataSource.rockets.first().id)
         filterRepo.changeRockets(rocketIds)
-        val filterRocketNames = rocketIds.map { filterRocketId -> RocketsDataSource.rockets.find { it.id == filterRocketId }!! }.map { it.name }.toSet()
+        val filterRocketNames = rocketIds.map { filterRocketId ->
+            RocketsDataSource.rockets.find { it.id == filterRocketId }!!
+        }.map { it.name }.toSet()
         val snapshot = items.asSnapshot {
             scrollTo(100)
         }
@@ -153,11 +157,15 @@ class LaunchesSearchViewModelTest {
         val rocketIds = setOf(RocketsDataSource.rockets.first().id)
         filterRepo.changeRockets(rocketIds)
         filterRepo.toggleLaunchedSelected()
-        val filterRocketNames = rocketIds.map { filterRocketId -> RocketsDataSource.rockets.find { it.id == filterRocketId }!! }.map { it.name }.toSet()
+        val filterRocketNames = rocketIds.map { filterRocketId ->
+            RocketsDataSource.rockets.find { it.id == filterRocketId }!!
+        }.map { it.name }.toSet()
         val snapshot = items.asSnapshot {
             scrollTo(100)
         }
-        assertTrue { snapshot.all { it.title.contains(query) && it.rocket in filterRocketNames && it.state is LaunchPreviewModel.State.Upcoming } }
+        assertTrue { snapshot.all {
+            it.title.contains(query) && it.rocket in filterRocketNames && it.state is LaunchPreviewModel.State.Upcoming
+        } }
     }
 
     @Test
@@ -169,15 +177,23 @@ class LaunchesSearchViewModelTest {
         val rocketIds = setOf(RocketsDataSource.rockets.first().id)
         filterRepo.changeRockets(rocketIds)
         filterRepo.toggleUpcomingSelected()
-        val filterRocketNames = rocketIds.map { filterRocketId -> RocketsDataSource.rockets.find { it.id == filterRocketId }!! }.map { it.name }.toSet()
+        val filterRocketNames = rocketIds.map { filterRocketId ->
+            RocketsDataSource.rockets.find { it.id == filterRocketId }!!
+        }.map { it.name }.toSet()
         val snapshot = items.asSnapshot {
             scrollTo(100)
         }
-        assertTrue { snapshot.all { it.title.contains(query) && it.rocket in filterRocketNames && it.state is LaunchPreviewModel.State.Launched } }
+        assertTrue {
+            snapshot.all {
+                it.title.contains(query)
+                        && it.rocket in filterRocketNames
+                        && it.state is LaunchPreviewModel.State.Launched
+            }
+        }
     }
 }
 
-class FakeLaunchesFilterRepository() : ILaunchesFilterRepository {
+class FakeLaunchesFilterRepository : ILaunchesFilterRepository {
     private val _query =  MutableStateFlow("")
     override val query: Flow<String> = _query
 
@@ -238,7 +254,9 @@ class LaunchFactory {
         return ILaunchesAPI.LaunchPreviewResponse(
             id.toString(),
             listOf("FalconSat", "FalconSat2").random(),
-            links = ILaunchesAPI.LaunchPreviewResponse.Links(patch = ILaunchesAPI.LaunchPreviewResponse.Links.Patch(null)),
+            links = ILaunchesAPI.LaunchPreviewResponse.Links(
+                patch = ILaunchesAPI.LaunchPreviewResponse.Links.Patch(null)
+            ),
             rocket = ILaunchesAPI.LaunchPreviewResponse.Rocket(RocketsDataSource.rockets.random().name),
             upcoming = Random.nextBoolean(),
             success = Random.nextBoolean()
@@ -249,7 +267,9 @@ class LaunchFactory {
 class FakeLaunchesRepository(private val launchFactory: LaunchFactory) : ILaunchesRepository {
 
     override fun pager(filters: ILaunchesFilterRepository.Filters): Flow<PagingData<LaunchPreviewModel>> {
-        val filterRocketNames = filters.rockets.map { filterRocketId -> RocketsDataSource.rockets.find { it.id == filterRocketId }!! }.map { it.name }.toSet()
+        val filterRocketNames = filters.rockets.map { filterRocketId ->
+            RocketsDataSource.rockets.find { it.id == filterRocketId }!!
+        }.map { it.name }.toSet()
 
         val filtered = launchFactory.launches
             .filter { if (!filters.isUpcomingSelected) it.state !is LaunchPreviewModel.State.Upcoming  else true }
