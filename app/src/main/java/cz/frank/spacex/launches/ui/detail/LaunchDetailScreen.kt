@@ -15,6 +15,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -55,10 +56,13 @@ import kotlinx.parcelize.Parcelize
 ) {
     val item by vm.launch.collectAsStateWithLifecycle()
     val article by vm.article.collectAsStateWithLifecycle()
+    val isPullRefreshing by vm.isPullRefreshing.collectAsStateWithLifecycle()
     LaunchDetailScreenLayout(
         onBackClick,
         item,
         article,
+        isPullRefreshing,
+        vm::pullRefresh,
         vm::fetchLaunch,
         vm::getYoutubeVideoElapsedTime,
         vm::savedYoutubeVideoElapsedTime,
@@ -70,6 +74,8 @@ import kotlinx.parcelize.Parcelize
     onBackClick: () -> Unit,
     model: Result<LaunchDetailModel>?,
     article: Result<OpenGraphMetaData>?,
+    isPullRefreshing: Boolean,
+    onPullRefresh: () -> Unit,
     retry: () -> Unit,
     getYoutubeVideoElapsedTime: () -> Float,
     saveYoutubeVideoElapsedTime: (Float) -> Unit,
@@ -77,7 +83,16 @@ import kotlinx.parcelize.Parcelize
 ) {
     model?.let { model ->
         model.onSuccess {
-            SuccessScreen(it, article, onBackClick, getYoutubeVideoElapsedTime, saveYoutubeVideoElapsedTime, modifier)
+            SuccessScreen(
+                it,
+                article,
+                isPullRefreshing,
+                onPullRefresh,
+                onBackClick,
+                getYoutubeVideoElapsedTime,
+                saveYoutubeVideoElapsedTime,
+                modifier
+            )
         }.onFailure {
             FailureScreen(retry = retry)
         }
@@ -88,6 +103,8 @@ import kotlinx.parcelize.Parcelize
 @Composable private fun SuccessScreen(
     model: LaunchDetailModel,
     articleMetaData: Result<OpenGraphMetaData>?,
+    isPullRefreshing: Boolean,
+    onPullRefresh: () -> Unit,
     onBackClick: () -> Unit,
     getYoutubeVideoElapsedTime: () -> Float,
     saveYoutubeVideoElapsedTime: (Float) -> Unit,
@@ -106,45 +123,43 @@ import kotlinx.parcelize.Parcelize
             )
         },
     ) {
-        val scroll = rememberScrollState()
-        Column(
-            Modifier
-                .padding(it)
-                .verticalScroll(scroll)
-        ) {
-            model.youtubeId?.let {
-                YoutubePlayer(it, getYoutubeVideoElapsedTime, saveYoutubeVideoElapsedTime)
-            }
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .fillMaxSize()) {
-                model.launchpad?.let {
-                    IconTextSection(R.drawable.ic_pin_drop, it.name)
-                    HorizontalDivider()
+        PullToRefreshBox(isPullRefreshing, onPullRefresh, Modifier.padding(it)) {
+            val scroll = rememberScrollState()
+            Column(Modifier.verticalScroll(scroll)) {
+                model.youtubeId?.let {
+                    YoutubePlayer(it, getYoutubeVideoElapsedTime, saveYoutubeVideoElapsedTime)
                 }
+                Column(
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxSize()) {
+                    model.launchpad?.let {
+                        IconTextSection(R.drawable.ic_pin_drop, it.name)
+                        HorizontalDivider()
+                    }
 
-                model.rocket.let {
-                    IconTextSection(R.drawable.ic_rocket, it.name)
+                    model.rocket.let {
+                        IconTextSection(R.drawable.ic_rocket, it.name)
+                        HorizontalDivider()
+                    }
+                    IconTextSection(
+                        R.drawable.ic_calendar_month,
+                        Instant
+                            .fromEpochMilliseconds(model.date)
+                            .format(stringResource(R.string.launches_detail_date_format))
+                    )
                     HorizontalDivider()
-                }
-                IconTextSection(
-                    R.drawable.ic_calendar_month,
-                    Instant
-                        .fromEpochMilliseconds(model.date)
-                        .format(stringResource(R.string.launches_detail_date_format))
-                )
-                HorizontalDivider()
-                model.detail?.let {
-                    IconTextSection(R.drawable.ic_description, it)
-                    HorizontalDivider()
-                }
-                Indicators(model)
+                    model.detail?.let {
+                        IconTextSection(R.drawable.ic_description, it)
+                        HorizontalDivider()
+                    }
+                    Indicators(model)
 
-                model.article?.let {
-                    HorizontalDivider()
-                    Box(Modifier.padding(vertical = 16.dp)) {
-                        Article(it, articleMetaData)
+                    model.article?.let {
+                        HorizontalDivider()
+                        Box(Modifier.padding(vertical = 16.dp)) {
+                            Article(it, articleMetaData)
+                        }
                     }
                 }
             }
