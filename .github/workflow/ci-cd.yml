@@ -1,0 +1,32 @@
+name: Android CI
+
+on:
+  push:
+    branches: [feature/ci]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+      - name: Set up Android SDK
+        uses: actions/setup-android@v2
+        with:
+          api-level: 35
+          sdk-root: './android-sdk'
+      - name: Install Android Emulator
+        run: sdkmanager --install "system-images;android-33;google_apis;x86"
+      - name: Create and Start Emulator
+        run: emulator -avd Pixel_API_33_x86 -no-skin -no-audio -no-window &
+      - name: Wait for Emulator
+        run: sleep 60
+      - name: Run Unit Tests
+        run: ./../../gradlew test
+      - name: Run Instrumented Tests
+        run: ./../../gradlew connectedAndroidTest
