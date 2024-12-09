@@ -110,6 +110,7 @@ dependencies {
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidlinkview)
     implementation(libs.youtube.core)
+    implementation(libs.kotlinx.collections.immutable)
 }
 
 detekt {

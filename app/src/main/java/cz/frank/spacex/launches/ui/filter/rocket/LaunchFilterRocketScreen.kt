@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cz.frank.spacex.R
 import cz.frank.spacex.launches.data.repository.RocketFilterModel
+import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun LaunchFilterRocketScreen(
@@ -42,7 +43,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun LaunchFilterRocketsLayout(
-    rockets: List<RocketFilterModel>,
+    rockets: ImmutableList<RocketFilterModel>,
     onCheckedAll: () -> Unit,
     onCheckedChange: (String) -> Unit,
     onBackClick: () -> Unit,

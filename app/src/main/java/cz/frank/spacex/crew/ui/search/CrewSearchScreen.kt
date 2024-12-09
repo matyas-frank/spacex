@@ -36,6 +36,8 @@ import cz.frank.spacex.main.ui.theme.attentionColor
 import cz.frank.spacex.main.ui.theme.failureColor
 import cz.frank.spacex.main.ui.theme.successColor
 import cz.frank.spacex.shared.ui.RefreshableCachedImage
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import org.koin.androidx.compose.koinViewModel
 
 @Composable fun CrewSearchScreen(
@@ -49,7 +51,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun CrewSearchLayout(
-    membersResult: Result<List<CrewMemberModel>>?,
+    membersResult: Result<ImmutableList<CrewMemberModel>>?,
     retry: () -> Unit,
     toggleDrawer: () -> Unit,
     modifier: Modifier = Modifier
@@ -80,7 +82,7 @@ import org.koin.androidx.compose.koinViewModel
     }
 }
 
-@Composable private fun CrewMembers(members: List<CrewMemberModel>, modifier: Modifier = Modifier) {
+@Composable private fun CrewMembers(members: ImmutableList<CrewMemberModel>, modifier: Modifier = Modifier) {
     if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
         LazyColumn(modifier) {
             items(members) {
@@ -178,7 +180,7 @@ val CrewMemberModel.Status.text get() = when (this) {
 @Composable
 private fun Prev() {
     SpaceXTheme {
-        CrewSearchLayout(Result.success(listOf(
+        CrewSearchLayout(Result.success(persistentListOf(
             CrewMemberModel(
                 "Robert Behnken",
                 CrewMemberModel.Status.ACTIVE,
@@ -204,6 +206,7 @@ private fun Prev() {
                 "https://en.wikipedia.org/wiki/Soichi_Noguchi"
             )
 
-        )), {}, {})
+        )
+        ), {}, {})
     }
 }

@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRocketRepository
 import cz.frank.spacex.launches.data.repository.RocketFilterModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesFilterRocketRepository) : ViewModel() {
-    private val _rockets = MutableStateFlow(listOf<RocketFilterModel>())
+    private val _rockets = MutableStateFlow<ImmutableList<RocketFilterModel>>(persistentListOf())
     val rockets = _rockets.asStateFlow()
 
     private var arePrefsFetched = false
@@ -23,7 +26,7 @@ class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesF
     fun onCheckedChange(id: String) {
         _rockets.update { rockets ->
             if (!(rockets.count { it.isSelected } == 1 && rockets.find { it.id == id }!!.isSelected)) {
-                rockets.map { if (it.id == id) it.copy(isSelected = !it.isSelected) else it }
+                rockets.map { if (it.id == id) it.copy(isSelected = !it.isSelected) else it }.toImmutableList()
             } else rockets
         }
     }
@@ -34,8 +37,8 @@ class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesF
                 rockets.mapIndexed { index, rocket ->
                     if (index == 0) rocket.copy(isSelected = true)
                     else rocket.copy(isSelected = false)
-                }
-            } else rockets.map { it.copy(isSelected = true) }
+                }.toImmutableList()
+            } else rockets.map { it.copy(isSelected = true) }.toImmutableList()
         }
     }
 
@@ -43,8 +46,8 @@ class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesF
         backupRockets = filterRocketRepository.getRockets()
         _rockets.update {
             if (backupRockets.none { it.isSelected }) {
-                backupRockets.map { it.copy(isSelected = true) }
-            } else backupRockets
+                backupRockets.map { it.copy(isSelected = true) }.toImmutableList()
+            } else backupRockets.toImmutableList()
         }
         arePrefsFetched = true
     }
