@@ -49,7 +49,21 @@ import org.koin.androidx.compose.koinViewModel
     val membersResult by vm.members.collectAsStateWithLifecycle()
     val isPullRefreshing by vm.isPullRefreshing.collectAsStateWithLifecycle()
 
-    CrewSearchLayout(membersResult, isPullRefreshing, vm::pullRefresh, vm::fetchCrew, toggleDrawer, modifier)
+    val context = LocalContext.current
+    fun onLinkClick(url: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(browserIntent)
+    }
+
+    CrewSearchLayout(
+        membersResult,
+        isPullRefreshing,
+        vm::pullRefresh,
+        vm::fetchCrew,
+        ::onLinkClick,
+        toggleDrawer,
+        modifier
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +72,7 @@ import org.koin.androidx.compose.koinViewModel
     isPullRefreshing: Boolean,
     onPullRefresh: () -> Unit,
     retry: () -> Unit,
+    onLinkClick: (String) -> Unit,
     toggleDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -85,7 +100,7 @@ import org.koin.androidx.compose.koinViewModel
         Box(Modifier.padding(it)) {
             membersResult?.let { model ->
                 model.fold(
-                    onSuccess= { CrewMembers(it, isPullRefreshing, onPullRefresh) },
+                    onSuccess= { CrewMembers(it, isPullRefreshing, onPullRefresh, onLinkClick) },
                     onFailure = { FailureScreen(retry = retry) }
                 )
             } ?: LoadingScreen()
@@ -98,33 +113,30 @@ import org.koin.androidx.compose.koinViewModel
     members: ImmutableList<CrewMemberModel>,
     isPullRefreshing: Boolean,
     onPullRefresh: () -> Unit,
+    onLinkClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     PullToRefreshBox(isPullRefreshing, onPullRefresh) {
         if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
             LazyColumn(modifier) {
                 items(members) {
-                    CrewMember(it)
+                    CrewMember(it, onLinkClick)
                 }
             }
         } else {
             LazyVerticalGrid(GridCells.Fixed(2), modifier, horizontalArrangement = Arrangement.spacedBy(32.dp)) {
                 items(members) {
-                    CrewMember(it)
+                    CrewMember(it, onLinkClick)
                 }
             }
         }
     }
 }
 
-@Composable private fun CrewMember(member: CrewMemberModel) {
-    val context = LocalContext.current
+@Composable private fun CrewMember(member: CrewMemberModel, onLinkClick: (String) -> Unit) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Card(
-            onClick = {
-                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(member.link))
-                context.startActivity(browserIntent)
-            },
+            onClick = { onLinkClick(member.link) },
             Modifier.padding(vertical = 16.dp)
         ) {
             Column(
@@ -229,6 +241,6 @@ private fun Prev() {
             )
 
         )
-        ), false, {}, {}, {})
+        ), false, {}, {}, {}, {})
     }
 }
