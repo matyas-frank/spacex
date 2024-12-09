@@ -223,7 +223,12 @@ import org.koin.compose.viewmodel.koinViewModel
                             EmptyResult()
                         }
                     } else {
-                        RefreshLoadingIndicator()
+                        if (items.loadState.hasError) {
+                            FailureResult { items.refresh() }
+                        } else {
+                            RefreshLoadingIndicator()
+                        }
+
                     }
                 }
             }
