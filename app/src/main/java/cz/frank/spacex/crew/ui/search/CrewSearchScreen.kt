@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -46,12 +47,16 @@ import org.koin.androidx.compose.koinViewModel
     vm: CrewSearchViewModel = koinViewModel()
 ) {
     val membersResult by vm.members.collectAsStateWithLifecycle()
-    CrewSearchLayout(membersResult, vm::fetchCrew, toggleDrawer, modifier)
+    val isPullRefreshing by vm.isPullRefreshing.collectAsStateWithLifecycle()
+
+    CrewSearchLayout(membersResult, isPullRefreshing, vm::pullRefresh, vm::fetchCrew, toggleDrawer, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable private fun CrewSearchLayout(
     membersResult: Result<ImmutableList<CrewMemberModel>>?,
+    isPullRefreshing: Boolean,
+    onPullRefresh: () -> Unit,
     retry: () -> Unit,
     toggleDrawer: () -> Unit,
     modifier: Modifier = Modifier
@@ -79,27 +84,34 @@ import org.koin.androidx.compose.koinViewModel
     ) {
         Box(Modifier.padding(it)) {
             membersResult?.let { model ->
-                model.onSuccess {
-                    CrewMembers(it)
-                }.onFailure {
-                    FailureScreen(retry = retry)
-                }
+                model.fold(
+                    onSuccess= { CrewMembers(it, isPullRefreshing, onPullRefresh) },
+                    onFailure = { FailureScreen(retry = retry) }
+                )
             } ?: LoadingScreen()
         }
     }
 }
 
-@Composable private fun CrewMembers(members: ImmutableList<CrewMemberModel>, modifier: Modifier = Modifier) {
-    if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
-        LazyColumn(modifier) {
-            items(members) {
-                CrewMember(it)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable private fun CrewMembers(
+    members: ImmutableList<CrewMemberModel>,
+    isPullRefreshing: Boolean,
+    onPullRefresh: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    PullToRefreshBox(isPullRefreshing, onPullRefresh) {
+        if (currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT) {
+            LazyColumn(modifier) {
+                items(members) {
+                    CrewMember(it)
+                }
             }
-        }
-    } else {
-        LazyVerticalGrid(GridCells.Fixed(2), modifier, horizontalArrangement = Arrangement.spacedBy(32.dp)) {
-            items(members) {
-                CrewMember(it)
+        } else {
+            LazyVerticalGrid(GridCells.Fixed(2), modifier, horizontalArrangement = Arrangement.spacedBy(32.dp)) {
+                items(members) {
+                    CrewMember(it)
+                }
             }
         }
     }
@@ -217,6 +229,6 @@ private fun Prev() {
             )
 
         )
-        ), {}, {})
+        ), false, {}, {}, {})
     }
 }

@@ -40,4 +40,8 @@
     <string name="launch_state_unsuccessful_launch_description">Launch was failure</string>
     <string name="launch_state_upcoming_launch_description">launch is upcoming</string>
     <string name="launch_state_unknown_state_launch_description">launch has unknown state</string>
+
+
+    <string name="no_internet">No internet connection</string>
+    <string name="fetch_problem">Refresh was not successful</string>
 </resources>
