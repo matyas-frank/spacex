@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.fresh.materiallinkpreview.models.OpenGraphMetaData
 import com.fresh.materiallinkpreview.parsing.OpenGraphMetaDataProvider
 import cz.frank.spacex.launches.data.repository.ILaunchesRepository
+import cz.frank.spacex.launches.domain.model.LaunchDetailModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

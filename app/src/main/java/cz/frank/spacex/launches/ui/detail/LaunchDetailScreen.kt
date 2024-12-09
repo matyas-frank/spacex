@@ -37,6 +37,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import cz.frank.spacex.R
+import cz.frank.spacex.launches.domain.model.LaunchDetailModel
 import cz.frank.spacex.main.ui.theme.attentionColor
 import cz.frank.spacex.main.ui.theme.failureColor
 import cz.frank.spacex.main.ui.theme.successColor

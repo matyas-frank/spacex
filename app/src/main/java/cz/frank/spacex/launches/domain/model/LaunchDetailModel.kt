@@ -1,4 +1,4 @@
-package cz.frank.spacex.launches.ui.detail
+package cz.frank.spacex.launches.domain.model
 
 data class LaunchDetailModel(
     val id: String,

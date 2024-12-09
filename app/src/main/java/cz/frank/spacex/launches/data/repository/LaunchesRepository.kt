@@ -4,8 +4,8 @@ import androidx.paging.*
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
 import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.data.database.entity.LaunchEntity
-import cz.frank.spacex.launches.ui.detail.LaunchDetailModel
-import cz.frank.spacex.launches.ui.search.LaunchPreviewModel
+import cz.frank.spacex.launches.domain.model.LaunchDetailModel
+import cz.frank.spacex.launches.domain.model.LaunchPreviewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent

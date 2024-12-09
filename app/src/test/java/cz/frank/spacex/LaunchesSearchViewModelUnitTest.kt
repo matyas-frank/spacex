@@ -11,8 +11,8 @@ import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.launches.data.repository.ILaunchesRepository
 import cz.frank.spacex.launches.data.repository.toEntity
 import cz.frank.spacex.launches.data.repository.toModel
-import cz.frank.spacex.launches.ui.detail.LaunchDetailModel
-import cz.frank.spacex.launches.ui.search.LaunchPreviewModel
+import cz.frank.spacex.launches.domain.model.LaunchDetailModel
+import cz.frank.spacex.launches.domain.model.LaunchPreviewModel
 import cz.frank.spacex.launches.ui.search.LaunchSearchViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

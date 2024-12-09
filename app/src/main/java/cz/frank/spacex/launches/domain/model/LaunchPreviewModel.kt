@@ -1,4 +1,4 @@
-package cz.frank.spacex.launches.ui.search
+package cz.frank.spacex.launches.domain.model
 
 data class LaunchPreviewModel(
     val id: String,
