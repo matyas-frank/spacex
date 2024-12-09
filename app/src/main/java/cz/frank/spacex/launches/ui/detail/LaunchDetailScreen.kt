@@ -57,6 +57,13 @@ import kotlinx.parcelize.Parcelize
     val item by vm.launch.collectAsStateWithLifecycle()
     val article by vm.article.collectAsStateWithLifecycle()
     val isPullRefreshing by vm.isPullRefreshing.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    fun onLinkClick(url: String) {
+        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context.startActivity(browserIntent)
+    }
+
     LaunchDetailScreenLayout(
         onBackClick,
         item,
@@ -64,6 +71,7 @@ import kotlinx.parcelize.Parcelize
         isPullRefreshing,
         vm::pullRefresh,
         vm::fetchLaunch,
+        ::onLinkClick,
         vm::getYoutubeVideoElapsedTime,
         vm::savedYoutubeVideoElapsedTime,
         modifier,
@@ -77,6 +85,7 @@ import kotlinx.parcelize.Parcelize
     isPullRefreshing: Boolean,
     onPullRefresh: () -> Unit,
     retry: () -> Unit,
+    onLinkClick: (String) -> Unit,
     getYoutubeVideoElapsedTime: () -> Float,
     saveYoutubeVideoElapsedTime: (Float) -> Unit,
     modifier: Modifier = Modifier,
@@ -89,6 +98,7 @@ import kotlinx.parcelize.Parcelize
                 isPullRefreshing,
                 onPullRefresh,
                 onBackClick,
+                onLinkClick,
                 getYoutubeVideoElapsedTime,
                 saveYoutubeVideoElapsedTime,
                 modifier
@@ -106,6 +116,7 @@ import kotlinx.parcelize.Parcelize
     isPullRefreshing: Boolean,
     onPullRefresh: () -> Unit,
     onBackClick: () -> Unit,
+    onLinkClick: (String) -> Unit,
     getYoutubeVideoElapsedTime: () -> Float,
     saveYoutubeVideoElapsedTime: (Float) -> Unit,
     modifier: Modifier = Modifier
@@ -158,7 +169,7 @@ import kotlinx.parcelize.Parcelize
                     model.article?.let {
                         HorizontalDivider()
                         Box(Modifier.padding(vertical = 16.dp)) {
-                            Article(it, articleMetaData)
+                            Article(it, articleMetaData, onLinkClick)
                         }
                     }
                 }
@@ -301,22 +312,22 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
     }
 }
 
-@Composable private fun Article(article: String, metaData: Result<OpenGraphMetaData>?)  {
+@Composable private fun Article(article: String, metaData: Result<OpenGraphMetaData>?, onLinkClick: (String) -> Unit)  {
     metaData?.let {
         it.onSuccess {
             if (it.title.isBlank() && it.description.isNullOrBlank()) {
-                NotLoadedLinkMetaData(article)
+                NotLoadedLinkMetaData(article, onLinkClick)
             } else {
-                CardLink(it)
+                CardLink(it, onLinkClick)
             }
         }.onFailure {
-            NotLoadedLinkMetaData(article)
+            NotLoadedLinkMetaData(article, onLinkClick)
         }
-    } ?: NotLoadedLinkMetaData(article)
+    } ?: NotLoadedLinkMetaData(article, onLinkClick)
 }
 
-@Composable private fun CardLink(article: OpenGraphMetaData) {
-    CardLinkTemplate(article.url) {
+@Composable private fun CardLink(article: OpenGraphMetaData, onLinkClick: (String) -> Unit) {
+    CardLinkTemplate(article.url, onLinkClick) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             if (article.imageUrl.isNotBlank()) {
                 val imagePainter = rememberAsyncImagePainter(article.imageUrl)
@@ -345,18 +356,14 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
     }
 }
 
-@Composable private fun NotLoadedLinkMetaData(url: String?) {
-    CardLinkTemplate(url) {
+@Composable private fun NotLoadedLinkMetaData(url: String, onLinkClick: (String) -> Unit) {
+    CardLinkTemplate(url, onLinkClick) {
         Text(stringResource(R.string.launches_detail_link))
     }
 }
 
-@Composable private fun CardLinkTemplate(url: String?, content: @Composable () -> Unit) {
-    val context = LocalContext.current
-    Card(onClick = {
-        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(browserIntent)
-    }) {
+@Composable private fun CardLinkTemplate(url: String, onLinkClick: (String) -> Unit, content: @Composable () -> Unit) {
+    Card(onClick = { onLinkClick(url) }) {
         Box(
             Modifier
                 .padding(16.dp)
