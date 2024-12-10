@@ -58,12 +58,12 @@ class CrewSearchViewModel(
         fetchCrew(
             beforeFetch = { _isPullRefreshing.value = true },
             withResult = {
+                delay(DELAY_NEEDED_FOR_CORRECT_ANIMATION_OF_PULL_REFRESH)
                 it.onSuccess {
                     _isPullRefreshing.value = false
                     _members.value = Result.success(it)
                 }
                 it.onFailure {
-                    delay(DELAY_NEEDED_FOR_CORRECT_ANIMATION_OF_PULL_REFRESH)
                     _isPullRefreshing.value = false
                     Toast.makeText(application, R.string.fetch_problem, Toast.LENGTH_SHORT).show()
                 }
