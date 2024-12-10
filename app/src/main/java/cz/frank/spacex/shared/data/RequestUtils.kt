@@ -10,8 +10,8 @@ data class RequestBody(val query: JsonElement = JsonObject(mapOf()), val options
 data class RequestOptions(
     val select: JsonElement,
     val sort: JsonElement = JsonObject(mapOf()),
-    val page: Int = 21,
-    val limit: Int = 10,
+    val page: Int,
+    val limit: Int,
     val populate: List<JsonElement> = listOf()
 )
 
