@@ -77,9 +77,7 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
                                 select("success")
                                 select("upcoming")
                             },
-                            sort = buildJsonObject {
-                                put("date_unix", 1)
-                            },
+                            sort = buildJsonObject {},
                             page = page,
                             limit = pageSize,
                             populate = listOf(
