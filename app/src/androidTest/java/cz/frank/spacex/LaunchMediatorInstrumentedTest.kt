@@ -24,7 +24,7 @@ import org.junit.runner.RunWith
 
 @ExperimentalPagingApi
 @RunWith(AndroidJUnit4::class)
-class LaunchMediatorUnitTest {
+class LaunchMediatorInstrumentedTest {
     private val mockFactory = LaunchFactory()
     private val mockApi = FakeLaunchAPI()
 
