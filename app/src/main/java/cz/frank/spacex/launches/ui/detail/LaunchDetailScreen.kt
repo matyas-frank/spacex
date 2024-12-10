@@ -369,9 +369,7 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
                 .padding(16.dp)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
-        ) {
-            content()
-        }
+        ) { content() }
     }
 }
 
@@ -380,9 +378,9 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
         Box(
             Modifier
                 .padding(it)
-                .fillMaxSize(), contentAlignment = Alignment.Center) {
-            Button(retry) { Text(stringResource(R.string.launch_search_retry_button)) }
-        }
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { Button(retry) { Text(stringResource(R.string.launch_search_retry_button)) } }
     }
 }
 
@@ -391,9 +389,9 @@ private fun Instant.format(format: String) = toLocalDateTime(TimeZone.currentSys
         Box(
             Modifier
                 .padding(it)
-                .fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
-        }
+                .fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) { CircularProgressIndicator() }
     }
 }
 

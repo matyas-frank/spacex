@@ -354,7 +354,10 @@ private fun Launches(
                 Modifier
                     .padding(16.dp)
                     .height(20.dp)
-                    .fillMaxWidth(), shape = RectangleShape, color = color) {}
+                    .fillMaxWidth(),
+                shape = RectangleShape,
+                color = color
+            ) {}
 
         }
     }
