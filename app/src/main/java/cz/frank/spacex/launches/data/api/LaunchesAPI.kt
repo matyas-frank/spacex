@@ -127,8 +127,8 @@ class LaunchesAPI(private val httpClient: HttpClient) : ILaunchesAPI {
 
 
 
-    companion object {
-        private const val BASE_LAUNCHES_URL = "v5/launches"
+    private companion object {
+        const val BASE_LAUNCHES_URL = "v5/launches"
     }
 }
 

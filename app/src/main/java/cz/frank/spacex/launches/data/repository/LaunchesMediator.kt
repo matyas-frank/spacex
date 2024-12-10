@@ -76,7 +76,7 @@ class LaunchesMediator(
     }
 
     private companion object {
-        private val MAX_CACHED_TIME = 20.seconds
+        val MAX_CACHED_TIME = 20.seconds
     }
 }
 

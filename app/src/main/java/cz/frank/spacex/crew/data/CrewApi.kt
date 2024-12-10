@@ -16,8 +16,8 @@ class CrewApi(private val httpClient: HttpClient) : ICrewApi {
     override suspend fun crewMembers(): Result<List<ICrewApi.CrewMemberResponse>> =
         runCatching { httpClient.get(BASE_CREW_URL).body() }
 
-    companion object {
-        private const val BASE_CREW_URL = "v4/crew"
+    private companion object {
+        const val BASE_CREW_URL = "v4/crew"
     }
 }
 

@@ -45,8 +45,8 @@ class SpaceXApplication : Application(), SingletonImageLoader.Factory {
             .build()
     }
 
-    companion object {
-       private const val MEMORY_CACHE_MAX_SIZE_PERCENT = 0.2
-        private const val DISK_CACHE_MAX_SIZE_BYTES: Long = 5 * 1024 * 1024
+    private companion object {
+        const val MEMORY_CACHE_MAX_SIZE_PERCENT = 0.2
+        const val DISK_CACHE_MAX_SIZE_BYTES: Long = 5 * 1024 * 1024
     }
 }

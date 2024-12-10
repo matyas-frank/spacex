@@ -27,7 +27,7 @@ class RemoteKeyDao(private val context: Context) : IRemoteKeyDao {
         }
     }
 
-    companion object {
-        private const val DEFAULT_PAGE_TO_LOAD = 1
+    private companion object {
+        const val DEFAULT_PAGE_TO_LOAD = 1
     }
 }

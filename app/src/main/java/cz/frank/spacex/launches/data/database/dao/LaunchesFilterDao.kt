@@ -62,8 +62,8 @@ class LaunchesFilterDao(private val context: Context) : ILaunchesFilterDao {
         }
     }
 
-    companion object {
-        private const val IS_LAUNCHED_SELECTED_DEFAULT_VALUE = true
-        private const val IS_UPCOMING_SELECTED_DEFAULT_VALUE = true
+    private companion object {
+        const val IS_LAUNCHED_SELECTED_DEFAULT_VALUE = true
+        const val IS_UPCOMING_SELECTED_DEFAULT_VALUE = true
     }
 }
