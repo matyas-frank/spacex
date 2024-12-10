@@ -279,12 +279,12 @@ private fun Launches(
                 exit = shrinkVertically(),
             ) { RefreshLoadingIndicator() }
         }
-        item {
+        stickyHeader {
             AnimatedVisibility(
                 items.loadState.refresh is LoadState.Error,
                 enter = expandVertically(),
                 exit = shrinkVertically(),
-            ) { RefreshButton { items.refresh() } }
+            ) { Surface(Modifier.fillMaxWidth()) { RefreshButton { items.refresh() } } }
         }
         items(
             items.itemCount,
@@ -320,7 +320,7 @@ private fun Launches(
 }
 
 @Composable private fun RefreshButton(onRefreshClick: () -> Unit) {
-    Button(onClick = onRefreshClick, Modifier.padding(16.dp)) {
+    Button(onClick = onRefreshClick, Modifier.padding(16.dp).wrapContentSize()) {
         Text(stringResource(R.string.launch_search_refresh_button))
     }
 }
