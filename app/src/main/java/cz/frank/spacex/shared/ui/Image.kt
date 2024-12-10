@@ -72,28 +72,22 @@ private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
             CachedRemoteImage(url, contentDescription, modifier, contentScale, onState = { imageState = it })
             AnimatedVisibility(imageState !is State.Success, enter = fadeIn(), exit = fadeOut()) {
                 when (imageState) {
-                    is State.Success -> {}
-                    is State.Error -> {
-                        Error({ isVisible = false })
-                    }
-                    is State.Loading, null -> {
-                        Loading()
-                    }
-                    is State.Empty -> {}
+                    is State.Success, State.Empty -> {}
+                    is State.Error -> { Error({ isVisible = false }) }
+                    is State.Loading, null -> { Loading() }
                 }
             }
         }
     }
-
-
 }
-
 
 @Composable private fun Error(onRefresh: () -> Unit) {
     Box(
         Modifier
             .padding(32.dp)
-            .fillMaxWidth(), contentAlignment = Alignment.Center) {
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
         Button(onRefresh) {
             Text(stringResource(R.string.launch_search_refresh_button))
         }
@@ -108,4 +102,3 @@ private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
         contentAlignment = Alignment.Center
     ) { CircularProgressIndicator(Modifier) }
 }
-

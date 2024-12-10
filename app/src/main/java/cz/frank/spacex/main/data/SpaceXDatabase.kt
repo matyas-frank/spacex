@@ -10,9 +10,11 @@ import cz.frank.spacex.launches.data.database.entity.LaunchEntity
 @Database(entities = [LaunchEntity::class], version = 1, exportSchema = true)
 abstract class SpaceXDatabase : RoomDatabase() {
     abstract fun launchesDao(): LaunchDao
-}
 
-fun spaceXDatabaseConstruction(applicationContext: Context) = Room.databaseBuilder(
-    applicationContext,
-    SpaceXDatabase::class.java, "spacex"
-).build()
+    companion object {
+        fun create(applicationContext: Context) = Room.databaseBuilder(
+            applicationContext,
+            SpaceXDatabase::class.java, "spacex"
+        ).build()
+    }
+}
