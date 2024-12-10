@@ -43,14 +43,14 @@ class LaunchesMediator(
         state: PagingState<Int, LaunchEntity>
     ): MediatorResult {
         val loadKey = when (loadType) {
-            LoadType.REFRESH -> remoteKeyDao.defaultPageToLoad
+            LoadType.REFRESH -> DEFAULT_PAGE_TO_LOAD
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
-                remoteKeyDao.nextPageToLoad.first().let { nextPage ->
+                remoteKeyDao.nextPageToLoad.first()?.let { nextPage ->
                     if (nextPage == IRemoteKeyDao.NOT_ANOTHER_PAGE_INDICATOR) {
                         return MediatorResult.Success(endOfPaginationReached = true)
                     } else nextPage
-                }
+                } ?: DEFAULT_PAGE_TO_LOAD
             }
         }
         val result = withContext(Dispatchers.IO) {
@@ -76,6 +76,7 @@ class LaunchesMediator(
 
     private companion object {
         val MAX_CACHED_TIME = 20.seconds
+        const val DEFAULT_PAGE_TO_LOAD = 1
     }
 }
 
