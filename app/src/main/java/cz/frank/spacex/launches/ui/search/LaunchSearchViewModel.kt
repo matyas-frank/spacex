@@ -29,12 +29,13 @@ class LaunchSearchViewModel(
         viewModelScope.launch { _query.value = filterRepository.query.first() }
     }
 
+    private var isRequestInitial = true
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val pager = filterRepository
         .allFilters
         .distinctUntilChanged()
         .debounce(400.milliseconds)
-        .flatMapLatest(launchesRepository::pager)
+        .flatMapLatest { launchesRepository.pager(it, !isRequestInitial).also { isRequestInitial = false } }
         .cachedIn(viewModelScope)
 
     fun onQueryChange(query: String) {

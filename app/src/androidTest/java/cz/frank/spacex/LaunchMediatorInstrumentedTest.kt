@@ -196,7 +196,8 @@ class LaunchMediatorUnitTest {
         FakeRemoteKeyDao(),
         FakeRefreshDao(),
         filters,
-        pageSize
+        pageSize,
+        false
     )
 }
 

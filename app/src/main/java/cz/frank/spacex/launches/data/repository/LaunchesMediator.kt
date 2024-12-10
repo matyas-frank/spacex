@@ -26,8 +26,10 @@ class LaunchesMediator(
     private val refreshDao: IRefreshDao,
     private val filters: ILaunchesFilterRepository.Filters,
     private val pageSize: Int,
+    private val forceRefresh: Boolean
 ) : RemoteMediator<Int, LaunchEntity>() {
     override suspend fun initialize(): InitializeAction {
+        if (forceRefresh) return InitializeAction.LAUNCH_INITIAL_REFRESH
         val timeOfLastRefreshInMillis = refreshDao.timeOfLastRefreshInMillis.first()
         return if (
             timeOfLastRefreshInMillis == null ||

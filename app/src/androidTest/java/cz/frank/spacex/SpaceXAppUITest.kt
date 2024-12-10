@@ -43,8 +43,8 @@ class SpaceXAppUITest {
         singleOf(::FakeLaunchesRepository) bind ILaunchesRepository::class
         singleOf(::LaunchesFilterRocketRepository) bind ILaunchesFilterRocketRepository::class
         singleOf(::LaunchesFilterRepository) bind ILaunchesFilterRepository::class
-        factory { (filters: ILaunchesFilterRepository.Filters, pageSize: Int) ->
-            LaunchesMediator(get(), get(), get(), get(), get(), filters, pageSize)
+        factory { (filters: ILaunchesFilterRepository.Filters, pageSize: Int, forceRefresh: Boolean) ->
+            LaunchesMediator(get(), get(), get(), get(), get(), filters, pageSize, forceRefresh)
         }
         viewModelOf(::LaunchSearchViewModel)
         viewModelOf(::LaunchFilterViewModel)

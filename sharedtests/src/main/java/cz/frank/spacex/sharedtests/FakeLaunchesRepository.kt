@@ -18,7 +18,7 @@ class FakeLaunchesRepository : ILaunchesRepository {
     fun setLaunches(launches: List<LaunchPreviewModel>) { this.launches = launches  }
     fun clearLaunches() { this.launches = listOf() }
 
-    override fun pager(filters: ILaunchesFilterRepository.Filters): Flow<PagingData<LaunchPreviewModel>> {
+    override fun pager(filters: ILaunchesFilterRepository.Filters, forceRefresh: Boolean): Flow<PagingData<LaunchPreviewModel>> {
         val filterRocketNames = filters.rockets.map { filterRocketId ->
             RocketsDataSource.rockets.find { it.id == filterRocketId }!!
         }.map { it.name }.toSet()

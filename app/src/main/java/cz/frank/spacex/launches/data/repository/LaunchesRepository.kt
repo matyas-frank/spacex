@@ -15,7 +15,7 @@ import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
 
 interface ILaunchesRepository {
-    fun pager(filters: ILaunchesFilterRepository.Filters): Flow<PagingData<LaunchPreviewModel>>
+    fun pager(filters: ILaunchesFilterRepository.Filters, forceRefresh: Boolean): Flow<PagingData<LaunchPreviewModel>>
     suspend fun detailLaunch(id: String): Result<LaunchDetailModel>
 }
 
@@ -24,10 +24,10 @@ class LaunchesRepository(
     private val launchAPI: ILaunchesAPI,
  ) : KoinComponent, ILaunchesRepository {
     @OptIn(ExperimentalPagingApi::class)
-    override fun pager(filters: ILaunchesFilterRepository.Filters) = Pager(
+    override fun pager(filters: ILaunchesFilterRepository.Filters, forceRefresh: Boolean) = Pager(
         config = PagingConfig(pageSize = PAGE_SIZE),
         pagingSourceFactory = { launchDao.getAllLaunches() },
-        remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE) }.value
+        remoteMediator = inject<LaunchesMediator> { parametersOf(filters, PAGE_SIZE, forceRefresh) }.value
     ).flow.map { items ->
         items.map { it.toModel() }
     }
