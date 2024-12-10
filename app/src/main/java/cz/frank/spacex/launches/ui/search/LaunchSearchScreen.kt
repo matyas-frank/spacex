@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -154,7 +155,7 @@ import org.koin.compose.viewmodel.koinViewModel
                 },
             )
         }, navigationIcon = {
-            IconButton(toggleDrawer) {
+            IconButton(toggleDrawer, Modifier.testTag("ToggleDrawerLaunches")) {
                 Icon(Icons.Default.Menu, stringResource(R.string.toggle_drawer_icon_description))
             }
         }, actions = {
@@ -169,7 +170,7 @@ import org.koin.compose.viewmodel.koinViewModel
                     Icon(
                         painterResource(R.drawable.ic_filter_list),
                         stringResource(R.string.navigate_to_filtering_description),
-                        Modifier.padding(2.dp)
+                        Modifier.padding(2.dp).testTag("Navigate to filter")
                     )
                 }
 

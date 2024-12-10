@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
@@ -86,7 +87,7 @@ import org.koin.androidx.compose.koinViewModel
             TopAppBar(
                 title = { Text(stringResource(R.string.crew_search_title)) },
                 navigationIcon = {
-                    IconButton(toggleDrawer) {
+                    IconButton(toggleDrawer, Modifier.testTag("ToggleDrawerCrew")) {
                         Icon(
                             Icons.Default.Menu,
                             stringResource(R.string.toggle_drawer_icon_description)
