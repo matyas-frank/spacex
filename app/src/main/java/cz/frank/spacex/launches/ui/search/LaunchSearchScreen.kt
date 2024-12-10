@@ -98,7 +98,7 @@ import org.koin.compose.viewmodel.koinViewModel
                 }
                 is LoadState.NotLoading -> {
                     if (loadingTriggered) {
-                        listState.scrollToItem(0)
+                        listState.animateScrollToItem(0)
                         loadingTriggered = false
                     }
                 }
