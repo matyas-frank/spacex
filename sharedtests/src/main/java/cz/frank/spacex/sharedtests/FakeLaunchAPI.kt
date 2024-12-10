@@ -27,11 +27,6 @@ class FakeLaunchAPI : ILaunchesAPI {
         val maxIndex = (page*pageSize)-1
         val sliceRange = (page - 1) * pageSize..maxIndex
 
-        println("Page $page")
-        println("Max index $maxIndex")
-        println("Slice range $sliceRange")
-        println("Launches size ${launches.count()}")
-
         failureMessage?.let {
             if (it.index in sliceRange) {
                 return Result.failure(Exception(it.message))
