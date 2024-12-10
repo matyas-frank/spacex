@@ -46,11 +46,11 @@ import kotlinx.serialization.Serializable
         modifier = modifier,
         drawerState = drawerState,
     ) {
-        Navigation(navController, ::toggleDrawer)
+        SpaceXNavigation(navController, ::toggleDrawer)
     }
 }
 
-@Composable private fun Navigation(
+@Composable private fun SpaceXNavigation(
     navController: NavHostController,
     toggleDrawer: () -> Unit
 ) {

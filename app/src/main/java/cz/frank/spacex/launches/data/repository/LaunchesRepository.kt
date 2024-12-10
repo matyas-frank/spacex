@@ -51,11 +51,11 @@ fun ILaunchesAPI.LaunchDetailResponse.toModel() = LaunchDetailModel(
     launchpad?.let { LaunchDetailModel.Launchpad(it.name) },
     LaunchDetailModel.Rocket(rocket.name),
     details,
-    date * UNIX_TO_EPOCH_MULTIPLIER,
+    date * MILLISECONDS_IN_SECOND,
     links.youtubeId,
     links.article
 )
 
-private const val UNIX_TO_EPOCH_MULTIPLIER = 1000
+private const val MILLISECONDS_IN_SECOND = 1000
 
 private const val PAGE_SIZE = 50

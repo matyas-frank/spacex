@@ -17,7 +17,7 @@ class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesF
     val rockets = _rockets.asStateFlow()
 
     private var arePrefsFetched = false
-    private var backupRockets = listOf<RocketFilterModel>()
+    private var initiallyLoadedRockets = listOf<RocketFilterModel>()
 
     init {
        viewModelScope.launch { updateRockets() }
@@ -43,18 +43,18 @@ class LaunchFilterRocketViewModel(private val filterRocketRepository: ILaunchesF
     }
 
     private suspend fun updateRockets() {
-        backupRockets = filterRocketRepository.getRockets()
+        initiallyLoadedRockets = filterRocketRepository.getRockets()
         _rockets.update {
-            if (backupRockets.none { it.isSelected }) {
-                backupRockets.map { it.copy(isSelected = true) }.toImmutableList()
-            } else backupRockets.toImmutableList()
+            if (initiallyLoadedRockets.none { it.isSelected }) {
+                initiallyLoadedRockets.map { it.copy(isSelected = true) }.toImmutableList()
+            } else initiallyLoadedRockets.toImmutableList()
         }
         arePrefsFetched = true
     }
 
     fun saveRockets() {
         val rocketsToSave = rockets.value
-        if (arePrefsFetched && rocketsToSave != backupRockets) {
+        if (arePrefsFetched && rocketsToSave != initiallyLoadedRockets) {
             viewModelScope.launch {
                 filterRocketRepository.saveRockets(
                     if (rocketsToSave.all { it.isSelected }) setOf()
