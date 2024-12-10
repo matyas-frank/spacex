@@ -159,7 +159,7 @@ import org.koin.compose.viewmodel.koinViewModel
                 Icon(Icons.Default.Menu, stringResource(R.string.toggle_drawer_icon_description))
             }
         }, actions = {
-            IconButton(onFilterScreenClick) {
+            IconButton(onFilterScreenClick, Modifier.testTag("NavigateToFilters")) {
                 BadgedBox(
                     badge = {
                         if (isAnyFilterActive) {

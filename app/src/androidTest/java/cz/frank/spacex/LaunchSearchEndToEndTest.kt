@@ -1,10 +1,7 @@
 package cz.frank.spacex
 
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import cz.frank.spacex.main.ui.MainActivity
 import org.junit.Rule
 import org.junit.Test
@@ -20,5 +17,18 @@ class LaunchSearchEndToEndTest {
         composeTestRule.onNodeWithTag("ToggleDrawerCrew").assertIsDisplayed().performClick()
         composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.drawer_launches)).assertIsDisplayed().performClick()
         composeTestRule.onNodeWithTag("ToggleDrawerLaunches").assertIsDisplayed()
+    }
+
+    @Test
+    fun ensureAtLeastOneLaunchedVsUpcomingIsSelected() {
+        composeTestRule.onNodeWithTag("NavigateToFilters").assertIsDisplayed().performClick()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_upcoming)).assertIsSelectable().assertIsSelected().performClick().assertIsNotSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_launched)).assertIsSelectable().assertIsSelected().performClick().assertIsSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_upcoming)).assertIsSelectable().assertIsNotSelected().performClick().assertIsSelected()
+
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_launched)).assertIsSelectable().assertIsSelected().performClick().assertIsNotSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_upcoming)).assertIsSelectable().assertIsSelected().performClick().assertIsSelected()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_launched)).assertIsSelectable().assertIsNotSelected().performClick().assertIsSelected()
     }
 }

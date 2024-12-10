@@ -54,7 +54,7 @@ private fun LaunchesFilterScreenLayout(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.launches_filter_title), Modifier.testTag("FilterTitle")) },
+                title = { Text(stringResource(R.string.launches_filter_title)) },
                 navigationIcon = {
                     IconButton(onBackClick) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, stringResource(R.string.navigate_back_description))
@@ -100,7 +100,7 @@ data class Chip(val isSelected: Boolean, val onClick: () -> Unit)
             FilterChip(
                 it.isSelected,
                 it.onClick,
-                R.string.launches_filter_chip_upcoming
+                R.string.launches_filter_chip_upcoming,
             )
         }
     }
