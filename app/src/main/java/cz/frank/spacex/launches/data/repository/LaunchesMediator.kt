@@ -46,14 +46,11 @@ class LaunchesMediator(
             LoadType.REFRESH -> remoteKeyDao.defaultPageToLoad
             LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
             LoadType.APPEND -> {
-                val lastItem = state.lastItemOrNull()
-                if (lastItem == null && state.anchorPosition == null) {
-                    return MediatorResult.Success(endOfPaginationReached = false)
+                remoteKeyDao.nextPageToLoad.first().let { nextPage ->
+                    if (nextPage == IRemoteKeyDao.NOT_ANOTHER_PAGE_INDICATOR) {
+                        return MediatorResult.Success(endOfPaginationReached = true)
+                    } else nextPage
                 }
-                if (lastItem == null) {
-                    return MediatorResult.Success(endOfPaginationReached = true)
-                }
-                remoteKeyDao.nextPageToLoad.first()
             }
         }
         val result = withContext(Dispatchers.IO) {
@@ -68,7 +65,7 @@ class LaunchesMediator(
                     }
                     response.nextPage?.let {
                         remoteKeyDao.updateNextPage(response.nextPage)
-                    }
+                    } ?: remoteKeyDao.updateNextPage(IRemoteKeyDao.NOT_ANOTHER_PAGE_INDICATOR)
                     launchDao.insertAllLaunches(*response.docs.map { it.toEntity() }.toTypedArray())
                 }
                 MediatorResult.Success(endOfPaginationReached = !response.hasNextPage)

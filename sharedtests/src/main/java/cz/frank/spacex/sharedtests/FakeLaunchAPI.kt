@@ -4,6 +4,7 @@ import cz.frank.spacex.launches.data.RocketsDataSource
 import cz.frank.spacex.launches.data.api.ILaunchesAPI
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.shared.data.PaginatedResponse
+import kotlin.math.min
 
 class FakeLaunchAPI : ILaunchesAPI {
     var failureMessage: FailureMessage? = null
@@ -24,7 +25,7 @@ class FakeLaunchAPI : ILaunchesAPI {
         pageSize: Int
     ): Result<PaginatedResponse<ILaunchesAPI.LaunchPreviewResponse>> {
 
-        val maxIndex = (page*pageSize)-1
+        val maxIndex = min(launches.count()-1, (page*pageSize)-1)
         val sliceRange = (page - 1) * pageSize..maxIndex
 
         failureMessage?.let {

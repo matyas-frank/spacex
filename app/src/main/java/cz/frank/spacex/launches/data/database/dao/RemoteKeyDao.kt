@@ -13,6 +13,9 @@ interface IRemoteKeyDao {
     val nextPageToLoad: Flow<Int>
     val defaultPageToLoad: Int
     suspend fun updateNextPage(page: Int)
+    companion object {
+        const val NOT_ANOTHER_PAGE_INDICATOR = -1
+    }
 }
 
 class RemoteKeyDao(private val context: Context) : IRemoteKeyDao {
