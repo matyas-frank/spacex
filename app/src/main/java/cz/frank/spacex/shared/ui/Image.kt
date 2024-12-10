@@ -32,19 +32,21 @@ import kotlinx.coroutines.delay
     contentScale: ContentScale = ContentScale.Fit,
     onState: ((State) -> Unit)? = null,
 ) {
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .memoryCacheKey(url)
-            .diskCacheKey(url)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .build(),
-        contentDescription = contentDescription,
-        modifier = modifier,
-        contentScale = contentScale,
-        onState = onState,
-    )
+    if (url != null) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(url)
+                .memoryCacheKey(url)
+                .diskCacheKey(url)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
+                .build(),
+            contentDescription = contentDescription,
+            modifier = modifier,
+            contentScale = contentScale,
+            onState = onState,
+        )
+    }
 }
 
 private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
@@ -88,7 +90,10 @@ private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
 
 
 @Composable private fun Error(onRefresh: () -> Unit) {
-    Box(Modifier.padding(32.dp).fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(
+        Modifier
+            .padding(32.dp)
+            .fillMaxWidth(), contentAlignment = Alignment.Center) {
         Button(onRefresh) {
             Text(stringResource(R.string.launch_search_refresh_button))
         }
@@ -97,7 +102,9 @@ private const val TIME_NEEDED_TO_REFRESH_IN_MILLIS = 400L
 
 @Composable private fun Loading() {
     Box(
-        Modifier.padding(32.dp).fillMaxWidth(),
+        Modifier
+            .padding(32.dp)
+            .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) { CircularProgressIndicator(Modifier) }
 }
