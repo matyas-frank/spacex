@@ -1,4 +1,7 @@
 import java.net.URI
+
+include(":sharedtests")
+
 pluginManagement {
     repositories {
         google {

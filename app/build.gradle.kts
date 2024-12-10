@@ -111,6 +111,9 @@ dependencies {
     implementation(libs.androidlinkview)
     implementation(libs.youtube.core)
     implementation(libs.kotlinx.collections.immutable)
+
+    testImplementation(project(":sharedtests"))
+    androidTestImplementation(project(":sharedtests"))
 }
 
 detekt {
