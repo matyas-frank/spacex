@@ -56,7 +56,7 @@ private fun LaunchesFilterScreenLayout(
             TopAppBar(
                 title = { Text(stringResource(R.string.launches_filter_title)) },
                 navigationIcon = {
-                    IconButton(onBackClick) {
+                    IconButton(onBackClick, Modifier.testTag("NavigateBack")) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, stringResource(R.string.navigate_back_description))
                     }
                 }

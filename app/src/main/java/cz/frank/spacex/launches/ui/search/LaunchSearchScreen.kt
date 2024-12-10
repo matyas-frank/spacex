@@ -163,7 +163,7 @@ import org.koin.compose.viewmodel.koinViewModel
                 BadgedBox(
                     badge = {
                         if (isAnyFilterActive) {
-                            Badge()
+                            Badge(Modifier.testTag("AnyActiveFilterBadge"))
                         }
                     }
                 ) {

@@ -129,4 +129,13 @@ class LaunchSearchEndToEndTest {
         composeTestRule.onNodeWithTag("NavigateBack").performClick()
         composeTestRule.onNodeWithTag("RocketBadge", useUnmergedTree = true).assertIsDisplayed()
     }
+
+    @Test
+    fun ensureBadgeIsDisplayedOnMainLaunchSearchWhenAnyFilterIsActive() {
+        composeTestRule.onNodeWithTag("AnyActiveFilterBadge", useUnmergedTree = true).assertIsNotDisplayed()
+        composeTestRule.onNodeWithTag("NavigateToFilters").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.launches_filter_chip_upcoming)).assertIsSelectable().assertIsSelected().performClick().assertIsNotSelected()
+        composeTestRule.onNodeWithTag("NavigateBack").performClick()
+        composeTestRule.onNodeWithTag("AnyActiveFilterBadge", useUnmergedTree = true).assertIsDisplayed()
+    }
 }
