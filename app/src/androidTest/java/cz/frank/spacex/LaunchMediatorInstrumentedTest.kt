@@ -16,7 +16,6 @@ import cz.frank.spacex.sharedtests.FakeRemoteKeyDao
 import cz.frank.spacex.sharedtests.LaunchFactory
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
