@@ -9,6 +9,7 @@ import cz.frank.spacex.launches.data.database.dao.LaunchDao
 import cz.frank.spacex.launches.data.database.entity.LaunchEntity
 import cz.frank.spacex.launches.data.repository.ILaunchesFilterRepository
 import cz.frank.spacex.launches.data.repository.LaunchesMediator
+import cz.frank.spacex.launches.data.repository.toEntity
 import cz.frank.spacex.main.data.SpaceXDatabase
 import cz.frank.spacex.sharedtests.FakeLaunchAPI
 import cz.frank.spacex.sharedtests.FakeRefreshDao
@@ -32,6 +33,14 @@ class LaunchMediatorUnitTest {
     private lateinit var dao: LaunchDao
 
 
+    private val filters = ILaunchesFilterRepository.Filters(
+        isUpcomingSelected = true,
+        isLaunchedSelected = true,
+        rockets = setOf(),
+        query = ""
+    )
+
+
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -52,23 +61,7 @@ class LaunchMediatorUnitTest {
         (0..pageSize).forEach { id ->
             mockApi.addLaunches(mockFactory.createLaunch(id))
         }
-
-
-        val filters = ILaunchesFilterRepository.Filters(
-            isUpcomingSelected = true,
-            isLaunchedSelected = true,
-            rockets = setOf(),
-            query = ""
-        )
-        val remoteMediator = LaunchesMediator(
-            db,
-            dao,
-            mockApi,
-            FakeRemoteKeyDao(),
-            FakeRefreshDao(),
-            filters,
-            pageSize
-        )
+        val remoteMediator = launchesMediator(pageSize)
         val pagingState = PagingState<Int, LaunchEntity>(
             listOf(),
             null,
@@ -86,21 +79,7 @@ class LaunchMediatorUnitTest {
         (0..<pageSize).forEach { id ->
             mockApi.addLaunches(mockFactory.createLaunch(id))
         }
-        val filters = ILaunchesFilterRepository.Filters(
-            isUpcomingSelected = true,
-            isLaunchedSelected = true,
-            rockets = setOf(),
-            query = ""
-        )
-        val remoteMediator = LaunchesMediator(
-            db,
-            dao,
-            mockApi,
-            FakeRemoteKeyDao(),
-            FakeRefreshDao(),
-            filters,
-            pageSize
-        )
+        val remoteMediator = launchesMediator(pageSize)
         val pagingState = PagingState<Int, LaunchEntity>(
             listOf(),
             null,
@@ -116,21 +95,7 @@ class LaunchMediatorUnitTest {
     fun refreshLoadReturnsErrorResultWhenErrorOccurs() = runTest {
         mockApi.failureMessage = FakeLaunchAPI.FailureMessage(0, "Throw refresh failure")
         val pageSize = 10
-        val filters = ILaunchesFilterRepository.Filters(
-            isUpcomingSelected = true,
-            isLaunchedSelected = true,
-            rockets = setOf(),
-            query = ""
-        )
-        val remoteMediator = LaunchesMediator(
-            db,
-            dao,
-            mockApi,
-            FakeRemoteKeyDao(),
-            FakeRefreshDao(),
-            filters,
-            pageSize
-        )
+        val remoteMediator = launchesMediator(pageSize)
         val pagingState = PagingState<Int, LaunchEntity>(
             listOf(),
             null,
@@ -140,5 +105,98 @@ class LaunchMediatorUnitTest {
         val result = remoteMediator.load(LoadType.REFRESH, pagingState)
         assertTrue(result is RemoteMediator.MediatorResult.Error)
     }
+
+    @Test
+    fun appendLoadReturnsErrorResultWhenErrorOccurs() = runTest {
+        val pageSize = 10
+        (0..<pageSize).forEach { id ->
+            mockApi.addLaunches(mockFactory.createLaunch(id))
+        }
+        mockApi.failureMessage = FakeLaunchAPI.FailureMessage(10, "Throw refresh failure")
+        val remoteMediator = launchesMediator(pageSize)
+        val pagingState = PagingState<Int, LaunchEntity>(
+            listOf(),
+            null,
+            PagingConfig(10),
+            10
+        )
+        val result = remoteMediator.load(LoadType.REFRESH, pagingState)
+        assertTrue(result is RemoteMediator.MediatorResult.Success)
+
+        val resultAppend = remoteMediator.load(LoadType.APPEND, pagingState)
+        assertTrue(resultAppend is RemoteMediator.MediatorResult.Success)
+    }
+
+    @Test
+    fun firstAppendReturnsSuccessAndSignalsEndOfPaginationReached() = runTest {
+        val pageSize = 10
+        val launches = (0..<2*pageSize).map { id ->
+            mockFactory.createLaunch(id)
+        }
+        for (launch in launches) {
+            mockApi.addLaunches(launch)
+        }
+        val remoteMediator = launchesMediator(pageSize)
+
+        // Refresh
+        val pagingState = PagingState(
+            listOf(PagingSource.LoadResult.Page(launches.take(10).map { it.toEntity() }, prevKey = null, nextKey = 1)),
+            10,
+            PagingConfig(10),
+            10
+        )
+        val result = remoteMediator.load(LoadType.REFRESH, pagingState)
+        assertTrue(result is RemoteMediator.MediatorResult.Success)
+
+
+        // First append
+        val resultAppend = remoteMediator.load(LoadType.APPEND, pagingState)
+        assertTrue(resultAppend is RemoteMediator.MediatorResult.Success)
+        assertTrue((resultAppend as RemoteMediator.MediatorResult.Success).endOfPaginationReached)
+    }
+
+
+    @Test
+    fun secondAppendSignalsEndOfPaginationReached() = runTest {
+        val pageSize = 10
+        val launches = (0..<3*pageSize).map { id ->
+            mockFactory.createLaunch(id)
+        }
+        for (launch in launches) {
+            mockApi.addLaunches(launch)
+        }
+        val remoteMediator = launchesMediator(pageSize)
+
+        val pagingState = PagingState(
+            listOf(PagingSource.LoadResult.Page(launches.take(10).map { it.toEntity() }, prevKey = null, nextKey = 1)),
+            10,
+            PagingConfig(10),
+            10
+        )
+        val result = remoteMediator.load(LoadType.REFRESH, pagingState)
+        assertTrue(result is RemoteMediator.MediatorResult.Success)
+
+
+        // First append
+
+        val resultAppend = remoteMediator.load(LoadType.APPEND, pagingState)
+        assertTrue(resultAppend is RemoteMediator.MediatorResult.Success)
+        assertTrue(!(resultAppend as RemoteMediator.MediatorResult.Success).endOfPaginationReached)
+
+        // Second append
+        val resultAppendSecond = remoteMediator.load(LoadType.APPEND, pagingState)
+        assertTrue(resultAppendSecond is RemoteMediator.MediatorResult.Success)
+        assertTrue((resultAppendSecond as RemoteMediator.MediatorResult.Success).endOfPaginationReached)
+    }
+
+    private fun launchesMediator(pageSize: Int) = LaunchesMediator(
+        db,
+        dao,
+        mockApi,
+        FakeRemoteKeyDao(),
+        FakeRefreshDao(),
+        filters,
+        pageSize
+    )
 }
 
