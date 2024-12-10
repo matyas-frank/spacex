@@ -120,7 +120,7 @@ data class Chip(val isSelected: Boolean, val onClick: () -> Unit)
         )
         Spacer(Modifier.weight(1f))
         if (selectedRockets != 0) {
-            Badge(Modifier.padding(16.dp)) {
+            Badge(Modifier.padding(16.dp).testTag("RocketBadge")) {
                 Text(selectedRockets.toString())
             }
         }
